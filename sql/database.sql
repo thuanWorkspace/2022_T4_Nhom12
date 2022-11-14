@@ -6,12 +6,14 @@ create table config(
     author varchar(500),
     mail varchar(500)
 );
+drop table file_log;
 create table file_log(
 	id_file INT PRIMARY KEY AUTO_INCREMENT,
     id_config int,
     date_create	timestamp default current_timestamp,
     log_status varchar(20),
-    author varchar(500)
+    author varchar(500),
+    paths varchar(500)
 );
 create table staging(
 	khuvuc_hethong varchar(300) not null,
@@ -454,7 +456,7 @@ day_type
 );
 SHOW VARIABLES LIKE "secure_file_privfile_log"
 select*from file_log;
--- // create  procedure find day which is today
+-- // create  procedure find day which is today example
 DELIMITER &&
 create procedure find_today() 
 begin
@@ -716,6 +718,28 @@ ALTER TABLE staging
 MODIFY COLUMN ngaycapnhat date;
 ALTER TABLE date_min    
 MODIFY COLUMN full_date date;
+-- của danh_________________________________________
+-- // kiểm tra status ở table staging
+-- DELIMITER &&
+-- create procedure today() 
+-- begin
+-- SELECT   paths ,log_status
+-- FROM file_log 
+-- WHERE date_create >= CURDATE() and log_status="ER";
+-- end&&
+-- call today();
+update file_log set log_status = "TR" where id_file=1 ;
+
+Delimiter //
+Create procedure Check_status()
+begin
+update file_log set log_status = "OK" where id_file=1 ;
+select * from file_log ;
+ 
+ 
+end //
+call Checkstagingstagingoriginoriginorigin_status(); 
+
  
 
 
