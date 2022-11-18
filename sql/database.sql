@@ -23,8 +23,8 @@ create table staging(
     giaban double,
     ngaycapnhat timestamp
 );
-drop table origin;
-create table origin(
+drop table data_warehouse;
+create table data_warehouse(
 	id int auto_increment primary key,
     khuvuc_hethong varchar(500) not null,
     khuvuc varchar(500),
@@ -33,7 +33,7 @@ create table origin(
     giaban double,
     ngaycapnhat varchar(500),
     isdelete bool,
-    expiredate timestamp,
+    expiredate varchar(500),
     ischoose bool
 );
 create table insert_temp_sv(
@@ -70,17 +70,17 @@ select * from config;
 -- LINES TERMINATED BY '\n';
 -- select * from staging;
 
--- convert from staging to origin - max 38 - 39 -> FAILED
+-- convert from staging to data_warehouse - max 38 - 39 -> FAILED
 -- -- hope
--- line 1 staging -> set old data 'ischoose' = false -> insert -> origin
--- line 2 staging -> set old data 'ischoose' = false -> isnert -> origin
+-- line 1 staging -> set old data 'ischoose' = false -> insert -> data_warehouse
+-- line 2 staging -> set old data 'ischoose' = false -> isnert -> data_warehouse
 -- -- problem 
--- line 1 staging ->CANNOT UPDATE set old data 'ischoose' = false -> insert -> origin
+-- line 1 staging ->CANNOT UPDATE set old data 'ischoose' = false -> insert -> data_warehouse
 -- -- problem SOLVED if TRIGGER
-INSERT INTO origin (khuvuc_hethong,khuvuc,hethong,giamua,giaban,ngaycapnhat,isdelete,expiredate,ischoose)
+INSERT INTO data_warehouse (khuvuc_hethong,khuvuc,hethong,giamua,giaban,ngaycapnhat,isdelete,expiredate,ischoose)
 SELECT khuvuc_hethong,khuvuc,hethong,giamua,giaban,ngaycapnhat,0,'2039-01-01',1
 FROM staging;
-select * from origin;
+select * from data_warehouse;
 select * from insert_temp_sv;
 update insert_temp_sv set ischoose = true;
 -- trigger
@@ -122,7 +122,7 @@ insert into insert_temp_sv(mssv,hoten,gioitinh,ischoose) values (19130222,"pham 
 --      end loop;
 --      close cur1;
 select * from staging;
-select * from origin;
+select * from data_warehouse;
 insert into config(source_http_url,file_name,author,mail) values("https://giavang.org/","hieuScriptToGiaVang","hieu","lechihieubl2020@gmail.com");
 drop table config;
 create table config(
@@ -193,7 +193,7 @@ using utf8mb4
 
 into lv_data
  ;
-loop_label: loop 
+loop_label: loop
 select instr(lv_data,'\n')
 into lv_temp_p;
 select substr(lv_data,1, lv_temp_p-1)
@@ -217,7 +217,6 @@ SUBSTRING_INDEX(SUBSTRING_INDEX(lv_line, ',',4),',',-1),
 SUBSTRING_INDEX(SUBSTRING_INDEX(lv_line, ',',5),',',-1),
 SUBSTRING_INDEX(SUBSTRING_INDEX(lv_line, ',',6),',',-1),
 SUBSTRING_INDEX(SUBSTRING_INDEX(lv_line, ',',7),',',-1)
-
 );
 end if ;
 
@@ -258,7 +257,7 @@ BEGIN
     LOOP
         FETCH cur1 INTO 	khuvuc_hethong1 ,khuvuc1,hethong1 , ngaycapnhat1,  giamua1 ,giaban1;
 --         EXIT WHEN cur1 %NOTFOUND;
-        INSERT INTO origin( 
+        INSERT INTO data_warehouse( 
     khuvuc_hethong ,khuvuc,hethong ,giamua ,giaban  ,ngaycapnhat
     ) 
         VALUES (khuvuc_hethong1 ,khuvuc1,hethong1 , ngaycapnhat1,  giamua1 ,giaban1);
@@ -271,12 +270,12 @@ select * from staging;
 
 truncate staging;
 
-   INSERT INTO origin( 
+   INSERT INTO data_warehouse( 
     khuvuc_hethong ,khuvuc,hethong ,giamua ,giaban  ,ngaycapnhat
     ) SELECT khuvuc_hethong ,khuvuc,hethong ,giamua ,giaban  ,ngaycapnhat
 FROM staging
 WHERE dateCreate >= curdate();
-select * from origin;
+select * from data_warehouse;
 -- // clean data staging ___________________________________
 -- xác định (declare) con trỏ
 -- DECLARE @mycur CURSOR
@@ -370,11 +369,11 @@ begin
       LEAVE read_loop;
      END IF;
 --  if id1=new.id then
- -- check colomn dateCreate is today then load data ino table origin
+ -- check colomn dateCreate is today then load data ino table data_warehouse
  if   dateCreate >= CURDATE()  then
 
 --  query example, insert into grade(`stud_id`,`stud_staus`)values(s_stud_id,s_stud_mark);
-    insert into origin( 
+    insert into data_warehouse( 
     khuvuc_hethong ,khuvuc,hethong ,giamua ,giaban ,  ,ngaycapnhat
     ) 
     values ( 
@@ -718,28 +717,41 @@ ALTER TABLE staging
 MODIFY COLUMN ngaycapnhat date;
 ALTER TABLE date_min    
 MODIFY COLUMN full_date date;
--- của danh_________________________________________
--- // kiểm tra status ở table staging
--- DELIMITER &&
--- create procedure today() 
--- begin
--- SELECT   paths ,log_status
--- FROM file_log 
--- WHERE date_create >= CURDATE() and log_status="ER";
--- end&&
--- call today();
+-- ________________________________________________________________CỦA DANH________________________________________________________________
 update file_log set log_status = "TR" where id_file=1 ;
-
-Delimiter //
-Create procedure Check_status()
-begin
-update file_log set log_status = "OK" where id_file=1 ;
 select * from file_log ;
- 
- 
+select * from staging;
+select * from data_warehouse;
+truncate table data_warehouse;
+Delimiter //
+Create procedure load_Staging_to_Datawarehouse()
+begin
+declare done int default 0;
+declare checking varchar(5);
+declare khuvuc_hethong_temp ,khuvuc_temp,hethong_temp ,ngaycapnhat_temp varchar (500);
+declare isdelete_temp ,ischoose_temp varchar (500);
+declare expiredate_temp varchar (500) default '31/12/9999';
+declare giamua_temp ,giaban_temp double;
+declare staging_cursor Cursor for select khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat FROM staging;
+declare continue handler for not found set done = 1;
+set checking = (select log_status from file_log where id_config = 1);
+if (checking = "TR") then 
+OPEN staging_cursor;
+my_cur_loop: LOOP
+FETCH staging_cursor INTO khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp;
+IF done = 1 THEN
+LEAVE my_cur_loop;
+END IF;
+INSERT INTO data_warehouse(khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat ,expiredate)
+VALUES (khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp ,expiredate_temp);
+END LOOP my_cur_loop ;
+CLOSE staging_cursor;
+update file_log set log_status = "OK" where id_file=1 ;
+end if;
 end //
-call Checkstagingstagingoriginoriginorigin_status(); 
-
+call load_Staging_to_Datawarehouse();
+//
+drop procedure load_Staging_to_Datawarehouse;
  
 
 
