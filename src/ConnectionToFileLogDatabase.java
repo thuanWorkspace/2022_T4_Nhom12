@@ -12,7 +12,7 @@ public class ConnectionToFileLogDatabase {
 //	        String username = config.get("user_database");
 //	        String password = config.get("password_database");
 		String username = "root";
-		String password = "123456";
+		String password = "1234";
 		con = DriverManager.getConnection(url, username, password);
 	}
 

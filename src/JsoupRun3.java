@@ -144,8 +144,7 @@ public class JsoupRun3 {
 		String source = "https://giavang.org/";
 		ArrayList<Gold> data = js.crawlData(source);
 		String filePath = fileExcelPath_Xlsx();
-		WriteExcel.writeExcel(data, filePath);
-		js.Write(data);
-
+//		WriteExcel.writeExcel(data, filePath);
+		System.out.println(js.Write(data));
 	}
 }

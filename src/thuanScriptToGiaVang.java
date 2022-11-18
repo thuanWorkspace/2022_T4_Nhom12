@@ -23,6 +23,7 @@ public class thuanScriptToGiaVang {
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, load);
+
 			ResultSet rs = ps.executeQuery();
 			Map<String, String> mp = new HashMap<String, String>();
 			while (rs.next()) {
