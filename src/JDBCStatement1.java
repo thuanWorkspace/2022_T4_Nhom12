@@ -7,7 +7,7 @@ public class JDBCStatement1 {
 	private static void load_Staging_to_Datawarehouse() {
 		Connection con = ConnectionToFileLogDatabase.getCon();
 		try {
-			CallableStatement callableStatement = con.prepareCall("{call Check_status()}");
+			CallableStatement callableStatement = con.prepareCall("{call load_Staging_to_Datawarehouse()}");
 			ResultSet rs = callableStatement.executeQuery();
 		} catch (Exception e) {
 			// TODO: handle exception
