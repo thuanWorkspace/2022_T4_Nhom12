@@ -97,13 +97,10 @@ iterate loop_label ;
 -- // không được 
 end loop;
 end //
-call load_file_to_staging ("C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/13-11_19-45-03.csv"); -- //Cập nhật lại đường link 
-//
+call load_file_to_staging ("C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/13-11_19-45-03.csv");// -- //Cập nhật lại đường link
+
 -- load file date_min from local to table date_dim
--- declare paths 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/date_dim_without_quarter.csv';
-//
-LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/date_dim_without_quarter.csv' INTO TABLE date_dim 
-FIELDS TERMINATED BY ','
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/date_dim_without_quarter.csv' INTO TABLE date_dim FIELDS TERMINATED BY ','
 -- OPTIONALLY ENCLOSED BY '"' 
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
@@ -126,26 +123,21 @@ year_week_monday ,
 week_monday_start , 
 holiday , 
 day_type 
-);
-//
-SHOW VARIABLES LIKE "secure_file_privfile_log";
-//
-select*from file_log;
-//
-select*from date_dim;
-//
+); //
+SHOW VARIABLES LIKE "secure_file_privfile_log";//
+select*from date_dim;//
+
 -- // create  procedure find day which is today
 -- // create procedure find lines at columns "dateCreate" which hava date today and column "status" is " ER " in table file_log
 -- // procedures today is find lines is today at columns dateCreate  and  status =ER at columns log_status in table file_log 
-DELIMITER //
 create procedure today() 
 begin
 SELECT paths ,log_status
 FROM file_log 
 WHERE date_create >= CURDATE() and log_status="ER";
 end //
-call today();
-//
+call today();//
+
 -- //create tables dim khuvuc
 create table dim_khuvuc(
 id_khuVuc int primary key auto_increment,
@@ -170,11 +162,9 @@ id_dateCreate varchar(500),
  dateCreate varchar(500) primary key 
 );
 //
--- // create procedure clean data column ngayCapNhat_______________________________
 
 -- procedure cleankhuvuc() ,Cursor browse line by line (learn about cursor in MySQL Workbench)
 --  cleankhuvuc() is convert  values at columns khuvuc from table staging to number
-DELIMITER //
 create procedure cleanKhuVuc()
 begin
 	declare done INT DEFAULT FALSE;
@@ -200,12 +190,10 @@ begin
    end loop;
    close cur1;
 end //
-call cleanKhuVuc();
-//
--- procedure he thong ,Cursor browse line by line (learn about cursor in MySQL Workbench)
+call cleanKhuVuc();//
 
+-- procedure he thong ,Cursor browse line by line (learn about cursor in MySQL Workbench)
 --  is convert  values at columns hethong from table staging to number
-DELIMITER //
 create procedure cleanHeThong()
 begin
 	DECLARE done INT DEFAULT FALSE;
@@ -235,10 +223,10 @@ WHERE
    end loop;
     close cur2;
 end //
-call cleanHeThong();
+call cleanHeThong();//
+
 -- create procedure  khuvuc_hethong to convert values at columns "khuvuc_hethong" to id of dim_khuvuc_hehthong when 
 -- when the value makes each line the same 
-DELIMITER //
 create procedure cleanKhuVucHeThong()
 begin
 	DECLARE done INT DEFAULT FALSE;
@@ -268,16 +256,15 @@ WHERE
    end loop;
     close cur2;
 end //
-call cleanKhuVucHeThong();
+call cleanKhuVucHeThong();//
+
 -- ________________________clean ngay cap nhat _________________________draft
 --  is convert  values at columns hethong from table staging to number
-
 -- the procedere is go through each line (using cursor ), compare the updated date value in
 --  the   column ngaycapnhat  is equal to the values at columns full_date in table date_dim
---  if so, set values  date create at "dateCreate" column at dim_dateCreate table  aquals "ngaycapnhat " column at table staging
+--  if so, set values  date create at "dateCreate" column at dim_dateCreate table  aquals "ngaycapnhat" column at table staging
 --   then set the values of fulldate for ngaycapnhat at  table staging ,
-DELIMITER //
-create procedure  cleanDateCreate()
+create procedure cleanDateCreate()
 begin
 	DECLARE done INT DEFAULT FALSE;
 	declare ncn varchar(500);
@@ -312,70 +299,70 @@ WHERE
    end loop;
     close cur3;
 end //
-call cleanDateCreate();
+call cleanDateCreate();//
+
 -- _________________________________________________________draft all
 -- create  column contain  variable hardcode from class.java  in  eclipse into config  
 -- create  column contain add variable hardcode in eclipse  into config  
-
 --  this is variable  contain  hardcode in class MailService.java
-
 alter table config 
-add  column usernameEmail varchar(500) after passwordMySQL ,
-add  column passwordEmail varchar(500) after usernameEmail ;
+add column usernameEmail varchar(500) after passwordMySQL ,
+add column passwordEmail varchar(500) after usernameEmail ;//
  
 alter table config 
-add  column dateTimeNow varchar(500) after passwordEmail ;
+add  column dateTimeNow varchar(500) after passwordEmail ;//
+
 alter table config 
-add  column nameFileError varchar(500) after dateTimeNow ;
--- --  this is variable  contain  hardcode in class JsupRun3.java
+add column nameFileError varchar(500) after dateTimeNow ;//
+-- this is variable  contain  hardcode in class JsupRun3.java
 
 -- this ís column file name (folder) excel 
 alter table config 
-add  column fileNameExcel  varchar(500) after nameFileError ;
+add column fileNameExcel  varchar(500) after nameFileError ;//
 
 -- this is paths save  file excel
 alter table config 
-add  column PathExcel  varchar(500) after fileNameExcel ;
+add column PathExcel  varchar(500) after fileNameExcel ;//
 
 -- this is column path save  file csv
 alter table config 
-add  column pathFileCsv  varchar(500) after PathExcel ; 
+add column pathFileCsv  varchar(500) after PathExcel ;//
 -- column status 1,2,3,4 is status at column log_status in file_log table 
 
 -- this is column status when run file not succesfuly
 alter table config 
-add  column status1  varchar(500) after pathFileCsv ; 
+add column status1  varchar(500) after pathFileCsv ;//
 
 -- this is column status when load data from wesite to local successfuly 
 alter table config 
-add  column status2  varchar(500) after status1 ;
+add column status2  varchar(500) after status1 ;//
  
 -- this is column status when load file from local to table staging in mysql workbench successfuly 
 alter table config 
-add  column status3  varchar(500) after status2 ; 
+add column status3  varchar(500) after status2 ;//
 
 -- this is status when load file from table staging  to data warehouse  successfuly 
 alter table config 
-add  column status4  varchar(500) after status3 ; 
+add column status4  varchar(500) after status3 ;//
 
 --  //__________________________________hardcode in class ConnectionToFilelog.java
 -- to connection to database we have address driver database  , path to database , user năme and  password of  dababase 
 -- create column user name , password mysql
 alter table config 
-add  column usernameMySQL varchar(500) after mail  ,
-add  column passwordMySQL   varchar(500) after usernameMySQL ;
+add column usernameMySQL varchar(500) after mail  ,
+add column passwordMySQL   varchar(500) after usernameMySQL ;//
 
 -- this is column address  driver to  connection to database after column passwordMySQL
 alter table config 
-add  column addressDriver  varchar(500) after passwordMySQL ; 
+add column addressDriver  varchar(500) after passwordMySQL ;// 
 
 -- this is column  path connection to database 
 alter table config 
-add  column url  varchar(500) after addressDriver ; 
+add column url  varchar(500) after addressDriver ;// 
 
 -- this is path connection to database 
 alter table config 
-add  column url  varchar(500) after passwordMySQL ; 
+add column url  varchar(500) after passwordMySQL ;// 
 
 -- query  drop column 
 -- alter table config 
