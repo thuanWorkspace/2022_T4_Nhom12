@@ -1,4 +1,11 @@
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -47,9 +54,12 @@ public class JsoupRun3 {
 				arrS1[x] = arrS1[x - 1];
 			}
 			naturalKey = arrS1[x] + "_" + arrS2[x];
-			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("YYYY-MM-DD hh:mm:ss");
-			LocalDateTime now = LocalDateTime.now();
-			gold = new Gold(naturalKey, arrS1[x], arrS2[x], arrS3[x], arrS4[x], arrS5[x], dtf.format(now));
+//			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("YYYY-MM-DD");// hh:mm:ss bỏ ra tạm//đóng l
+			LocalDate dtf = LocalDate.now();
+
+//			System.out.println(dtf);
+//			LocalDateTime now = LocalDateTime.now();//đóng lại
+			gold = new Gold(naturalKey, arrS1[x], arrS2[x], arrS3[x], arrS4[x], arrS5[x], dtf);// dtf.format(now)
 			listGoldData.add(gold);
 //			System.out.println(gold.toString());
 		}
@@ -80,18 +90,24 @@ public class JsoupRun3 {
 		String excelFilePath = changePath + fileName + ".xlsx";
 		return excelFilePath;
 	}
+
 //	dd-MM-yy_HH-mm-ss
 	public static String Write(ArrayList<Gold> data) {
-		DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("dd-MM_HH-mm-ss");// yyyy/MM-dd.HH-mm-ss
+		//
+		DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("dd-MM-yy_HH-mm-ss");// yyyy/MM-dd.HH-mm-ss//yy-MM-dd_HH-mm-ss
 		LocalDateTime now1 = LocalDateTime.now();
+//		String fileName = dtf1.format(now1);
 		String fileName = dtf1.format(now1);
+
 //        File f = new File("D:\\DataWareHouse\\datawarehouse\\" + fileName + ".csv");
-		File f = new File("C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\" + fileName + ".csv");
+		String paths="C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\";
+		
+		File f = new File( paths+ fileName + ".csv");// fileName
 		String path = f.getAbsolutePath();
 //        System.out.println(f.getAbsolutePath());
 		try {
 			FileOutputStream fos = new FileOutputStream(f);
-			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yy_HH-mm-ss");
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yy_HH-mm-ss");//
 			OutputStreamWriter writerutf8 = new OutputStreamWriter(fos, "UTF-8");
 			PrintWriter writer = new PrintWriter(writerutf8, true);
 			LocalDateTime now = LocalDateTime.now();
@@ -141,10 +157,11 @@ public class JsoupRun3 {
 	//
 	public static void main(String[] args) throws IOException {
 		JsoupRun3 js = new JsoupRun3();
-		String source = "https://giavang.org/";
+		String source = "https://giavang.org/";// the path is just for test method 
 		ArrayList<Gold> data = js.crawlData(source);
 		String filePath = fileExcelPath_Xlsx();
-//		WriteExcel.writeExcel(data, filePath);
-		System.out.println(js.Write(data));
+		WriteExcel.writeExcel(data, filePath);
+		js.Write(data);
+
 	}
 }
