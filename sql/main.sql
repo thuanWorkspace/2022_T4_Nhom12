@@ -22,6 +22,7 @@ CREATE TABLE staging (
     hethong VARCHAR(500),
     giamua DOUBLE,
     giaban DOUBLE,
+    chenhlech DOUBLE,
     ngaycapnhat VARCHAR(500)
 );
 CREATE TABLE data_warehouse (
@@ -33,7 +34,7 @@ CREATE TABLE data_warehouse (
     giaban DOUBLE,
     ngaycapnhat VARCHAR(500),
     isdelete BOOL,
-    expiredate TIMESTAMP
+    expiredate INT
 );
 CREATE TABLE date_dim (
     date_sk VARCHAR(500),
@@ -406,8 +407,6 @@ END LOOP my_cur_loop ;
 CLOSE staging_cursor;
 UPDATE file_log SET log_status = 'OK' WHERE id_file = 1;
 end if;
-if (checking = "OK") then
-iterate my_cur_loop;
-end if;
+
 end //
 call load_Staging_to_Datawarehouse();
