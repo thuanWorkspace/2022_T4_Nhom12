@@ -17,7 +17,7 @@ import org.jsoup.select.Elements;
 
 public class JsoupRun3 {
 	public String tgCapNhat = null;
-
+	//thuan edit
 	public ArrayList<Gold> crawlData(String source) throws IOException {
 		int i = 0;
 		String khuVuc = null;
