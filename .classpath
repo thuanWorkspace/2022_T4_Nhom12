@@ -6,17 +6,17 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/Data_Warehouse/mysql-connector-java-8.0.30/mysql-connector-java-8.0.30.jar">
+	<classpathentry kind="lib" path="lybrary/activation-0.X.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/Data_Warehouse/week2_2022_09_13/activation-0.X.jar">
+	<classpathentry kind="lib" path="lybrary/javax.mail-1.6.2.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/Data_Warehouse/week2_2022_09_13/javax.mail-1.6.2.jar">
+	<classpathentry kind="lib" path="lybrary/mysql-connector-java-8.0.30.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
