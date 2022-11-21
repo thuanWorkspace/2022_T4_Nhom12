@@ -216,7 +216,8 @@ tenKhuVuc_HeThong varchar(500)
 --  _____________________________ create table dim_dateCreate 
 create table dim_dateCreate(
 id_dateCreate varchar(500),
- dateCreate varchar(500) primary key 
+ dateCreate varchar(500) 
+-- 	primary key 
 
 );
 
