@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 public class Gold {
     private String id;
     private String khuVuc;
@@ -5,9 +7,9 @@ public class Gold {
     private int giaMua;
     private int giaBan;
     private int chenhLech;
-    private String timeCrawlData;
+    private LocalDate timeCrawlData;
 
-    public Gold(String id, String khuVuc, String heThong, int giaMua, int giaBan, int chenhLech, String timeCrawlData) {
+    public Gold(String id, String khuVuc, String heThong, int giaMua, int giaBan, int chenhLech, LocalDate timeCrawlData) {
         this.id = id;
         this.khuVuc = khuVuc;
         this.heThong = heThong;
@@ -41,7 +43,7 @@ public class Gold {
         return id;
     }
 
-    public String getTimeCrawlData() {
+    public LocalDate getTimeCrawlData() {
         return timeCrawlData;
     }
 
