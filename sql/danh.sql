@@ -728,13 +728,20 @@ Create procedure load_Staging_to_Datawarehouse()
 begin
 declare done int default 0;
 declare checking varchar(5);
-declare khuvuc_hethong_temp ,khuvuc_temp,hethong_temp ,ngaycapnhat_temp varchar (500);
-declare isdelete_temp ,ischoose_temp varchar (500);
-declare expiredate_temp varchar (500) default '31/12/9999';
+declare khuvuc_hethong_temp ,khuvuc_temp,hethong_temp ,currentdate ,ngaycapnhat_temp varchar (500);
+declare khu_vuc1 ,he_thong1 varchar (500);
+declare isdelete_temp varchar(5) default "false";
+declare expiredate_temp ,expiredate1 ,id_temp int;
 declare giamua_temp ,giaban_temp double;
 declare staging_cursor Cursor for select khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat FROM staging;
 declare continue handler for not found set done = 1;
-set checking = (select log_status from file_log where id_config = 1);
+set checking = (select log_status from file_log where id_config = 1 order by log_status desc limit 1);
+set expiredate_temp = (select date_sk from date_dim order by date_sk desc limit 1) ;
+set currentdate=(select date_sk from date_dim where full_date=current_date() limit 1);
+
+Set isdelete_temp = "true";
+Set id_temp=(Select id from data_warehouse where khuvuc=1 and hethong =1 order by khuvuc_hethong desc limit 1);
+
 if (checking = "TR") then 
 OPEN staging_cursor;
 my_cur_loop: LOOP
@@ -742,16 +749,61 @@ FETCH staging_cursor INTO khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua
 IF done = 1 THEN
 LEAVE my_cur_loop;
 END IF;
-INSERT INTO data_warehouse(khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat ,expiredate)
-VALUES (khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp ,expiredate_temp);
+INSERT INTO data_warehouse(khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat ,isdelete ,expiredate)
+VALUES (khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp ,isdelete_temp ,expiredate_temp);
+Set khu_vuc1 = (Select khuvuc from data_warehouse where khuvuc=1 and hethong =1 order by khuvuc_hethong limit 1);
+Set he_thong1 = (Select hethong from data_warehouse where khuvuc=1 and hethong =1 order by khuvuc_hethong limit 1);
+IF (khu_vuc = data_warehouse.khuvuc and he_thong = data_warehouse.hethong and expiredate_check=data_warehouse.expiredate
+-- khu_vuc= (Select khuvuc from data_warehouse where khuvuc=1 and hethong =1 order by khuvuc_hethong limit 1)
+-- and he_thong= (Select hethong from data_warehouse where khuvuc=1 and hethong =1 order by khuvuc_hethong limit 1)
+-- and expiredate_check = (Select expiredate from data_warehouse where khuvuc=1 and hethong =1 order by khuvuc_hethong desc limit 1)
+) THEN
+FETCH staging_cursor INTO khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp;
+IF done = 1 THEN
+LEAVE my_cur_loop;
+END IF;
+INSERT INTO data_warehouse(khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat ,isdelete ,expiredate)
+VALUES (khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp ,isdelete_temp ,currentdate);
+END IF;
+-- //////////////////
 END LOOP my_cur_loop ;
 CLOSE staging_cursor;
-update file_log set log_status = "OK" where id_file=1 ;
+UPDATE file_log SET log_status = 'OK' WHERE id_config = 1;
 end if;
+
 end //
-call load_Staging_to_Datawarehouse();
-//
-drop procedure load_Staging_to_Datawarehouse;
- 
+
+call load_Staging_to_Datawarehouse();//
+Select * from data_warehouse where khuvuc=1 and hethong =1 order by khuvuc_hethong desc limit 1;//
+Delimiter //
+Create procedure load_Staging_to_Datawarehouse_begin()
+begin
+declare done int default 0;
+declare checking varchar(5);
+declare khuvuc_hethong_temp ,khuvuc_temp,hethong_temp ,currentdate ,ngaycapnhat_temp varchar (500);
+declare isdelete_temp varchar(5) default "false";
+declare expiredate_temp ,expiredate_check int;
+declare giamua_temp ,giaban_temp double;
+declare staging_cursor Cursor for select khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat FROM staging;
+declare continue handler for not found set done = 1;
+set checking = (select log_status from file_log where id_config = 1 order by log_status desc limit 1);
+set expiredate_temp = (select date_sk from date_dim order by date_sk desc limit 1) ;
+set currentdate=(select date_sk from date_dim where full_date=current_date() limit 1);
+if (checking = "TR") then 
+OPEN staging_cursor;
+my_cur_loop: LOOP
+FETCH staging_cursor INTO khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp;
+IF done = 1 THEN
+LEAVE my_cur_loop;
+END IF;
+INSERT INTO data_warehouse(khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat ,isdelete ,expiredate)
+VALUES (khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp ,isdelete_temp ,expiredate_temp);
+END LOOP my_cur_loop ;
+CLOSE staging_cursor;
+UPDATE file_log SET log_status = 'OK' WHERE id_config = 1;
+END IF;
+
+end //
+call load_Staging_to_Datawarehouse_begin();//
 
 
