@@ -126,7 +126,6 @@ holiday ,
 day_type 
 ); //
 SHOW VARIABLES LIKE "secure_file_privfile_log";//
-select*from date_dim;//
 
 -- // create  procedure find day which is today
 -- // create procedure find lines at columns "dateCreate" which hava date today and column "status" is " ER " in table file_log
@@ -374,38 +373,50 @@ add column url  varchar(500) after passwordMySQL ;//
 -- add  column passwordEmail  varchar(500) after usernameEmail ;
 
 -- ________________________________________________________________CỦA DANH________________________________________________________________
-update file_log set log_status = "TR" where id_file=1 ;//
+update file_log set log_status = "TR" where id_config=1 ;//
 select * from file_log ;//
 select * from staging;//
 select * from data_warehouse;//
 truncate table data_warehouse;//
-select * from date_dim order by date_sk desc limit 1;//
-select log_status from file_log where id_config = 1 limit 1;//
+select date_sk from date_dim order by date_sk desc limit 1;//
 Delimiter //
 Create procedure load_Staging_to_Datawarehouse()
 begin
 declare done int default 0;
 declare checking varchar(5);
 declare khuvuc_hethong_temp ,khuvuc_temp,hethong_temp ,ngaycapnhat_temp varchar (500);
-declare isdelete_temp ,ischoose_temp varchar (500);
-declare expiredate_temp int;
+declare isdelete_temp TINYINT(1) default 0;
+declare expiredate_temp ,expiredate_check int;
 declare giamua_temp ,giaban_temp double;
 declare staging_cursor Cursor for select khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat FROM staging;
 declare continue handler for not found set done = 1;
 set checking = (select log_status from file_log where id_config = 1 order by log_status desc limit 1);
 set expiredate_temp = (select date_sk from date_dim order by date_sk desc limit 1) ;
+set expiredate_check = (select date_sk from date_dim order by date_sk desc limit 1) ;
 if (checking = "TR") then 
 OPEN staging_cursor;
 my_cur_loop: LOOP
+-- //////////////////
+if (expiredate_check = expiredate_temp) then
+Set isdelete_temp = 1;
 FETCH staging_cursor INTO khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp;
 IF done = 1 THEN
 LEAVE my_cur_loop;
 END IF;
-INSERT INTO data_warehouse(khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat ,expiredate)
-VALUES (khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp ,expiredate_temp);
+INSERT INTO data_warehouse(khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat ,isdelete ,expiredate)
+VALUES (khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp ,isdelete_temp ,CURDATE());
+ELSE
+FETCH staging_cursor INTO khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp;
+IF done = 1 THEN
+LEAVE my_cur_loop;
+END IF;
+INSERT INTO data_warehouse(khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat ,isdelete ,expiredate)
+VALUES (khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp ,isdelete_temp ,expiredate_temp);
+END IF;
+-- //////////////////
 END LOOP my_cur_loop ;
 CLOSE staging_cursor;
-UPDATE file_log SET log_status = 'OK' WHERE id_file = 1;
+UPDATE file_log SET log_status = 'OK' WHERE id_config = 1;
 end if;
 
 end //
