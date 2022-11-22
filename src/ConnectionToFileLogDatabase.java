@@ -13,8 +13,9 @@ public class ConnectionToFileLogDatabase {
 /**
 	 * this is the path of file.txt contain user name , pass of account mySQL workbench
 	 */
-	final static String filePath = "C:\\Users\\Administrator\\Desktop\\test\\account.txt";
-	
+ //	final static String filePath = "src/resources/account.txt";
+	static  String pathUserPassMySQL = new File("resources/account.txt").getAbsolutePath();
+              
 	private ConnectionToFileLogDatabase() throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		String url = "jdbc:mysql://localhost:3306/controller";
@@ -30,67 +31,8 @@ public class ConnectionToFileLogDatabase {
 	}
 	//_________________________________________________
 	
-	/**
-	 * the method to get file.txt load to HashMap<String, String> , using BufferedReader
-	 * the txt.file is file contains user name and password of account MySQL Workbench
-	 * input:(String key,String values)
-	 * @return map
-	 * Example:
-	 * userName root 
-	 * passWord 123456
-	
-	 */
-	
-//	public static Map<String,String> getUserPass(){
-//		//hieu code here!
-//		Map<String, String> map = new HashMap<String, String>();
-//		BufferedReader br = null;
-//
-//		try {
-//
-//			// create file object
-//			File file = new File(filePath);
-//
-//			// create BufferedReader object from the File
-//			br = new BufferedReader(new FileReader(file));
-//
-//			String line = null;
-//
-//			// read file line by line
-//			while ((line = br.readLine()) != null) {
-//
-//				// split the line by :
-////				String[] parts = line.split(":");
-//				String[] parts = line.split(" ");
-//
-//				// first part is userName, second is pass
-//				String name = parts[0].trim();
-//				String number = parts[1].trim();
-//
-//				// put userName, pass  in HashMap if they are
-//				// not empty
-//				if (!name.equals(" ") && !number.equals(" "))
-//					map.put(name, number);
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		} finally {
-//
-//			// Always close the BufferedReader
-//			if (br != null) {
-//				try {
-//					br.close();
-//				} catch (Exception e) {
-//				}
-//
-//			}
-//		}
-//
-//		return map;
-//		
-//		
-////		return new HashMap<String, String>();
-//	}
+
+
 	public static ConnectionToFileLogDatabase getInstance() throws SQLException, ClassNotFoundException {
 		if (getConnection == null)
 			getConnection = new ConnectionToFileLogDatabase();
@@ -116,14 +58,14 @@ public class ConnectionToFileLogDatabase {
 		/**
 		 * test method getUsernamePassword();
 		 */
-//		getUsernamePassword();
-		// read text file to HashMap
-//		Map<String, String> mapFromFile = getUsernamePassword();
-//
-//		// iterate over HashMap entries
-//		for (Map.Entry<String, String> entry : mapFromFile.entrySet()) {
-//			System.out.println(entry.getKey() + " " + entry.getValue());
-//		}
+		getUsernamePassword();
+//		 read text file to HashMap
+		Map<String, String> mapFromFile = getUsernamePassword();
+
+		// iterate over HashMap entries
+		for (Map.Entry<String, String> entry : mapFromFile.entrySet()) {
+			System.out.println(entry.getKey() + " " + entry.getValue());
+		}
 	}
 	/**
 	 * the method to get file.txt load to HashMap<String, String> , using BufferedReader.
@@ -144,7 +86,7 @@ public class ConnectionToFileLogDatabase {
 		try {
 
 			// create file object
-			File file = new File(filePath);
+			File file = new File(pathUserPassMySQL);
 
 			// create BufferedReader object from the File
 			br = new BufferedReader(new FileReader(file));
