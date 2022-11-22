@@ -41,11 +41,23 @@ public class ConnectionToFileLogDatabase {
 
 	public static void main(String[] args) {
 		getCon();
+			getUsernamePassword();
+		/**
+		 * test method getUsernamePassword();
+		 */
+//		getUsernamePassword();
+		// read text file to HashMap
+		Map<String, String> mapFromFile = getUsernamePassword();
+
+		// iterate over HashMap entries
+		for (Map.Entry<String, String> entry : mapFromFile.entrySet()) {
+			System.out.println(entry.getKey() + " " + entry.getValue());
+		}
 	}
 	/**
 	 * the method to get file.txt load to HashMap<String, String> , using BufferedReader
 	 * the txt.file is file contains user name and password of account MySQL Workbench
-	 * input:(key,values)
+	 * input:(String key,String values)
 	 * @return map
 	 * Example:
 	 * userName root 
