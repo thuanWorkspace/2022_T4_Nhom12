@@ -740,7 +740,7 @@ set expiredate_temp = (select date_sk from date_dim order by date_sk desc limit 
 set currentdate=(select date_sk from date_dim where full_date=current_date() limit 1);
 
 Set isdelete_temp = "true";
-Set id_temp=(Select id from data_warehouse where khuvuc=1 and hethong =1 order by khuvuc_hethong desc limit 1);
+-- Set id_temp=(Select id from data_warehouse where khuvuc=1 and hethong =1 order by khuvuc_hethong desc limit 1);
 
 if (checking = "TR") then 
 OPEN staging_cursor;
@@ -800,7 +800,7 @@ INSERT INTO data_warehouse(khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngay
 VALUES (khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp ,isdelete_temp ,expiredate_temp);
 END LOOP my_cur_loop ;
 CLOSE staging_cursor;
-UPDATE file_log SET log_status = 'OK' WHERE id_config = 1;
+-- UPDATE file_log SET log_status = 'OK' WHERE id_config = 1;
 END IF;
 
 end //
