@@ -443,5 +443,4 @@ select * from data_warehouse;
 select * from file_log;
 END //
 call load_Staging_to_Datawarehouse();//
-
-
+-- csnsdfnsdfnosnfosjfiop
