@@ -14,15 +14,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class thuanScriptToGiaVang {
-	private static String load = "thuanScriptToGiaVang";
+//	private static String load = "thuanScriptToGiaVang";
 
 	// load default config first thuanScriptToGiaVang.
 	public static Map<String, String> loadDefaultConfig() {
 		Connection con = ConnectionToFileLogDatabase.getCon();
-		String sql = "select id_config,source_http_url,author,mail,file_name from config where file_name=?;";
+//		String sql = "select id_config,source_http_url,author,mail,file_name from config where file_name=?;";//cmt
+//		String sql = "select id_config,source_http_url,author,mail,file_name from config where id=1;";
+		String sql = "select id_config,source_http_url,author,mail,file_name,dateTimeNow,PathFileError,PathFileExcel,pathFileCsv,status1,status2,status3,status4 from config where id_config=1;";
+
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
-			ps.setString(1, load);
+//			ps.setString(1, load);//cmt
 
 			ResultSet rs = ps.executeQuery();
 			Map<String, String> mp = new HashMap<String, String>();
@@ -32,6 +35,20 @@ public class thuanScriptToGiaVang {
 				mp.put("author", rs.getString("author"));
 				mp.put("mail", rs.getString("mail"));
 				mp.put("file_name", rs.getString("file_name"));
+				mp.put("dateTimeNow", rs.getString("dateTimeNow"));
+				mp.put("PathFileError", rs.getString("PathFileError"));
+
+				// của hiếu thêm vào 
+				mp.put("PathFileExcel", rs.getString("PathFileExcel"));
+				mp.put("pathFileCsv", rs.getString("pathFileCsv"));
+//				
+				mp.put("status1", rs.getString("status1"));
+				mp.put("status2",rs.getString("status2"));
+				mp.put("status3", rs.getString("status3"));
+				mp.put("status4", rs.getString("status4"));
+				//
+			
+			
 			}
 			return mp;
 		} catch (SQLException e) {
@@ -109,13 +126,24 @@ public class thuanScriptToGiaVang {
 	}
 
 	public static String timenow() {
-		DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");// yyyy/MM-dd.HH-mm-ss
+		
+//		String dateTimeNow="yyyy-MM-dd_HH-mm-ss";
+        Map<String,String> pathFile = loadDefaultConfig();
+        String dateTimeNow = pathFile.get("dateTimeNow");
+        //
+        
+		DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern(dateTimeNow);// yyyy/MM-dd.HH-mm-ss
 		LocalDateTime now1 = LocalDateTime.now();
 		return dtf1.format(now1);
 	}
 
 	public static PrintWriter printErr() {
-		File f = new File("datawarehouse\\ERROR.txt");
+		 Map<String,String> pathFile = loadDefaultConfig();
+	        String pathFileError = pathFile.get("PathFileError");
+	        
+//		String pathFileError="datawarehousess\\ERROR.txt";
+//		String pathFileError="D:\\testError\\ERROR.txt";
+		File f = new File(pathFileError);
 		OutputStream os;
 		try {
 			os = new FileOutputStream(f, true);
