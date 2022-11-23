@@ -1,3 +1,4 @@
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -137,10 +138,13 @@ public class JDBCStatement {
 	public static void getPaths() {
 		// step1 :load file to staging
 		Connection con = ConnectionToFileLogDatabase.getCon();
-
+String sql ="truncate staging;";
+	
 		List<String> p = loadPaths();
 
 		try {
+//			ps.setString(1, load);//cmt
+
 			CallableStatement callableStatement = con.prepareCall("{call load_file_to_staging (?)}");
 			for (String p1 : p) {
 				callableStatement.setString(1, p1);
@@ -153,10 +157,17 @@ public class JDBCStatement {
 				 * convert values at staging to numbers
 				 * 
 				 */
+				
 				cleanArea_System();
 				cleanArea();
 				cleanSystem();
 				cleanDateCreate();
+
+				cleanArea();
+				
+//				load_Staging_to_Datawarehouse_initialization();
+				
+
 				load_Staging_to_Datawarehouse();
 			}
 		} catch (Exception e) {
@@ -269,7 +280,7 @@ public class JDBCStatement {
 	 * staging ,then update log_status from "ER" to "TR"
 	 */
 
-	private static void updateStatus(String status, String paths) {
+	public static void updateStatus(String status, String paths) {
 		Connection con = ConnectionToFileLogDatabase.getCon();
 		String sql = "update file_log set log_status =? where paths =?;";
 
