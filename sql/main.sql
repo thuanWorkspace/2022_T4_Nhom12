@@ -440,7 +440,6 @@ CLOSE staging_cursor;
 UPDATE file_log SET log_status = 'OK' where log_status = "TR" limit 1;
 END IF;
 select * from data_warehouse;
-select * from file_log;
 END //
 call load_Staging_to_Datawarehouse();//
 

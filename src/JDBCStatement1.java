@@ -4,7 +4,7 @@ import java.util.List;
 
 public class JDBCStatement1 {
 
-	private static void load_Staging_to_Datawarehouse() {
+	public static void load_Staging_to_Datawarehouse() {
 		Connection con = ConnectionToFileLogDatabase.getCon();
 		try {
 			CallableStatement callableStatement = con.prepareCall("{call load_Staging_to_Datawarehouse()}");
@@ -16,6 +16,6 @@ public class JDBCStatement1 {
 
 	public static void main(String[] args) {
 		JDBCStatement1 jdbcStatement = new JDBCStatement1();
-		jdbcStatement.load_Staging_to_Datawarehouse();
+		load_Staging_to_Datawarehouse();
 	}
 }
