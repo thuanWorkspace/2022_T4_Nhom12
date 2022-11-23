@@ -26,7 +26,7 @@ public class JDBCStatement {
 			ResultSet rs = ps1.executeQuery();
 			rs.next();
 			String s = rs.getString(1);
-			while (s.equalsIgnoreCase("TR")) {
+			if (s.equalsIgnoreCase("TR")) {
 				PreparedStatement ps2 = con.prepareStatement("select id from data_warehouse where id=1 order by id limit 1");
 				Boolean flags = ps2.executeQuery().next();
 				if (flags == false) {
