@@ -10,6 +10,25 @@ import java.util.Map;
 public class ConnectionToFileLogDatabase {
 	private static ConnectionToFileLogDatabase getConnection;
 	private static Connection con;
+	
+	
+	public static void main(String[] args) {
+		getCon();
+//			getUsernamePassword();
+		/**
+		 * test method getUsernamePassword();
+		 */
+		getUsernamePassword();
+//		 read text file to HashMap
+		Map<String, String> mapFromFile = getUsernamePassword();
+
+		// iterate over HashMap entries
+		for (Map.Entry<String, String> entry : mapFromFile.entrySet()) {
+			System.out.println(entry.getKey() + " " + entry.getValue());
+		}
+	}
+	
+	
 /**
 	 * this is the path of file.txt contain user name , pass of account mySQL workbench
 	 */
@@ -52,21 +71,7 @@ public class ConnectionToFileLogDatabase {
 		return con;
 	}
 
-	public static void main(String[] args) {
-		getCon();
-//			getUsernamePassword();
-		/**
-		 * test method getUsernamePassword();
-		 */
-		getUsernamePassword();
-//		 read text file to HashMap
-		Map<String, String> mapFromFile = getUsernamePassword();
 
-		// iterate over HashMap entries
-		for (Map.Entry<String, String> entry : mapFromFile.entrySet()) {
-			System.out.println(entry.getKey() + " " + entry.getValue());
-		}
-	}
 	/**
 	 * the method to get file.txt load to HashMap<String, String> , using BufferedReader.
 	 * the txt.file is file contains user name and password of account MySQL Workbench.
