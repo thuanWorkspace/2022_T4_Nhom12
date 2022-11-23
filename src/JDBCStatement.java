@@ -149,7 +149,7 @@ public class JDBCStatement {
 				cleanSystem();
 				cleanDateCreate();
 				cleanArea();
-//				load_Staging_to_Datawarehouse_initialization();
+				load_Staging_to_Datawarehouse_initialization();
 
 			}
 
