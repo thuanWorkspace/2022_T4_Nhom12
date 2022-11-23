@@ -99,7 +99,7 @@ iterate loop_label ;
 -- // không được 
 end loop;
 end //
-call load_file_to_staging ("C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/21-11-22_16-38-05.csv");// -- //Cập nhật lại đường link
+call load_file_to_staging ("C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/21-11-22_23-11-46.csv");// -- //Cập nhật lại đường link
 
 -- load file date_min from local to table date_dim
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/date_dim_without_quarter.csv' INTO TABLE date_dim FIELDS TERMINATED BY ','
@@ -301,64 +301,52 @@ call cleanDateCreate();//
 -- create  column contain  variable hardcode from class.java  in  eclipse into config  
 -- create  column contain add variable hardcode in eclipse  into config  
 --  this is variable  contain  hardcode in class MailService.java
+-- _________________________________________________________draft all 
+
+--  this is variable  contain  hardcode in class MailService.java
 alter table config 
-add column usernameEmail varchar(500) after passwordMySQL ,
-add column passwordEmail varchar(500) after usernameEmail ;//
+add  column usernameEmail  varchar(500) after passwordMySQL ,
+add  column passwordEmail  varchar(500) after usernameEmail  ;
+ ;
  
+ alter table config 
+add  column dateTimeNow  varchar(500) after passwordEmail ;
 alter table config 
-add  column dateTimeNow varchar(500) after passwordEmail ;//
+add  column pathFileError  varchar(500) after dateTimeNow ;
 
-alter table config 
-add column nameFileError varchar(500) after dateTimeNow ;//
--- this is variable  contain  hardcode in class JsupRun3.java
 
--- this ís column file name (folder) excel 
-alter table config 
-add column fileNameExcel  varchar(500) after nameFileError ;//
+-- --  this is variable  contain  hardcode in class JsupRun3.java
 
 -- this is paths save  file excel
 alter table config 
-add column PathExcel  varchar(500) after fileNameExcel ;//
+add  column PathFileExcel  varchar(500) after pathFileError ;
+
+
 
 -- this is column path save  file csv
 alter table config 
-add column pathFileCsv  varchar(500) after PathExcel ;//
+add  column pathFileCsv  varchar(500) after PathFileExcel ; 
+
 -- column status 1,2,3,4 is status at column log_status in file_log table 
 
 -- this is column status when run file not succesfuly
 alter table config 
-add column status1  varchar(500) after pathFileCsv ;//
+add  column status1  varchar(500) after pathFileCsv ; 
 
 -- this is column status when load data from wesite to local successfuly 
 alter table config 
-add column status2  varchar(500) after status1 ;//
+add  column status2  varchar(500) after status1 ;
  
 -- this is column status when load file from local to table staging in mysql workbench successfuly 
 alter table config 
-add column status3  varchar(500) after status2 ;//
+add  column status3  varchar(500) after status2 ; 
 
 -- this is status when load file from table staging  to data warehouse  successfuly 
 alter table config 
-add column status4  varchar(500) after status3 ;//
-
+add  column status4  varchar(500) after status3 ; 
 --  //__________________________________hardcode in class ConnectionToFilelog.java
 -- to connection to database we have address driver database  , path to database , user năme and  password of  dababase 
--- create column user name , password mysql
-alter table config 
-add column usernameMySQL varchar(500) after mail  ,
-add column passwordMySQL   varchar(500) after usernameMySQL ;//
 
--- this is column address  driver to  connection to database after column passwordMySQL
-alter table config 
-add column addressDriver  varchar(500) after passwordMySQL ;// 
-
--- this is column  path connection to database 
-alter table config 
-add column url  varchar(500) after addressDriver ;// 
-
--- this is path connection to database 
-alter table config 
-add column url  varchar(500) after passwordMySQL ;// 
 
 -- query  drop column 
 -- alter table config 
@@ -398,9 +386,14 @@ select * from data_warehouse;
 end //
 call load_Staging_to_Datawarehouse_initialization();//
 
+
+
+
+
+-- // ___________________________________________________ cập nhặt trạng thái tr 
 update file_log set log_status = "TR" where id_config=1 ;//
 truncate table data_warehouse;//
-
+-- ___________________laod staging to date warehouse  
 Delimiter //
 Create procedure load_Staging_to_Datawarehouse()
 begin
