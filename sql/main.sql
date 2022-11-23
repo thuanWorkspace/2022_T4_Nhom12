@@ -69,6 +69,7 @@ begin
 declare lv_data varchar(4000);
 declare lv_line  varchar(4000);
 declare lv_temp_p int ;
+truncate staging;
 -- find paths whose today and status is ER
 -- SELECT  paths
 -- FROM file_log 
@@ -141,8 +142,8 @@ call today();//
 
 -- //create tables dim khuvuc
 create table dim_khuvuc(
-id_khuVuc int primary key auto_increment,
-tenkhuVuc varchar(500)
+id_khuvuc int primary key auto_increment,
+tenkhuvuc varchar(500)
 );
 //
 -- //create tables dim hethong 
@@ -169,30 +170,34 @@ id_dateCreate varchar(500),
 --  cleankhuvuc() is convert  values at columns khuvuc from table staging to number
 create procedure cleanKhuVuc()
 begin
-	declare done INT DEFAULT FALSE;
+	DECLARE done INT DEFAULT FALSE;
 	declare kv1 varchar(500);
-    declare id_khuvuc1 int default -1;
-	declare cur1 cursor for select khuvuc from staging;
+    declare id_kv1  int default -1;
+	declare cur2 cursor for select khuvuc from staging;
     declare continue handler for not found set done = true;
-    open cur1;
+    open cur2;
     myloop: loop
     if done then
 		leave myloop;
 	end if;
-    fetch cur1 into kv1;
+    fetch cur2 into kv1;
     -- khu vuc deal
-    set id_khuvuc1 = (select id_khuVuc from dim_khuVuc where tenKhuVuc = kv1);
-    if id_khuvuc1 then
-		update staging set khuvuc = id_khuvuc1 where khuvuc=kv1;
+    set id_kv1 = (select id_khuvuc from dim_khuvuc where tenkhuvuc = kv1);
+    if id_kv1 then
+		update staging set khuvuc = id_kv1 where khuvuc=kv1;
 	else
-		insert into dim_khuvuc(tenKhuVuc) values(kv1);
-        set id_khuvuc1 = (select id_khuVuc from dim_khuvuc where tenkhuVuc = kv1);
-        update staging set khuvuc = id_khuvuc1 where khuvuc=kv1;
+		insert into dim_khuvuc(tenkhuvuc) values(kv1);
+    set id_kv1 = (select id_khuvuc from dim_khuvuc where tenkhuvuc = kv1);
+UPDATE staging 
+SET 
+    khuvuc = id_kv1
+WHERE
+    khuvuc = kv1;
 	end if;
    end loop;
-   close cur1;
+    close cur2;
 end //
-call cleanKhuVuc();//
+call cleanKhuVuc()//
 
 -- procedure he thong ,Cursor browse line by line (learn about cursor in MySQL Workbench)
 --  is convert  values at columns hethong from table staging to number
@@ -216,11 +221,7 @@ begin
 	else
 		insert into dim_hethong(tenHeThong) values(ht1);
         set id_hethong1 = (select id_heThong from dim_hethong where tenHeThong = ht1);
-UPDATE staging 
-SET 
-    hethong = id_hethong1
-WHERE
-    hethong = ht1;
+UPDATE staging SET hethong = id_hethong1 WHERE hethong = ht1;
 	end if;
    end loop;
     close cur2;
@@ -446,7 +447,7 @@ INSERT INTO data_warehouse(khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngay
 VALUES (khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp ,isdelete_temp ,expiredate_temp);
 END LOOP my_cur_loop ;
 CLOSE staging_cursor;
-UPDATE file_log SET log_status = 'OK' where log_status = "TR" limit 1;
+-- UPDATE file_log SET log_status = 'OK' where log_status = "TR" limit 1;
 END IF;
 select * from data_warehouse;
 END //
@@ -467,7 +468,6 @@ CREATE TABLE data_warehouse_temp (
 insert into data_warehouse_temp(id1 ,khuvuc_hethong1,khuvuc1,hethong1,giamua1,giaban1,ngaycapnhat1,isdelete1,expiredate1)
 select id ,khuvuc_hethong,khuvuc,hethong,giamua,giaban,ngaycapnhat,isdelete,expiredate from data_warehouse;//
 
- 
 insert into data_warehouse (id ,khuvuc_hethong,khuvuc,hethong,giamua,giaban,ngaycapnhat,isdelete,expiredate)
 select id1 ,khuvuc_hethong1,khuvuc1,hethong1,giamua1,giaban1,ngaycapnhat1,isdelete1,expiredate1 from data_warehouse_temp;//
 -- /////////////////////////////////////////
