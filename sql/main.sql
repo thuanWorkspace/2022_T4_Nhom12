@@ -37,7 +37,7 @@ CREATE TABLE data_warehouse (
     expiredate INT
 );
 CREATE TABLE date_dim (
-    date_sk VARCHAR(500),
+    date_sk int ,
     full_date VARCHAR(500),
     day_since_2005 VARCHAR(500),
     month_since_2005 VARCHAR(500),
@@ -309,20 +309,17 @@ alter table config
 add  column dateTimeNow varchar(500) after passwordEmail ;//
 
 alter table config 
-add column nameFileError varchar(500) after dateTimeNow ;//
+add column PathFileError varchar(500) after dateTimeNow ;//
 -- this is variable  contain  hardcode in class JsupRun3.java
 
--- this ís column file name (folder) excel 
-alter table config 
-add column fileNameExcel  varchar(500) after nameFileError ;//
 
 -- this is paths save  file excel
 alter table config 
-add column PathExcel  varchar(500) after fileNameExcel ;//
+add column PathFileExcel  varchar(500) after fileNameExcel ;//
 
 -- this is column path save  file csv
 alter table config 
-add column pathFileCsv  varchar(500) after PathExcel ;//
+add column pathFileCsv  varchar(500) after PathFileExcel ;//
 -- column status 1,2,3,4 is status at column log_status in file_log table 
 
 -- this is column status when run file not succesfuly
@@ -398,8 +395,19 @@ select * from data_warehouse;
 end //
 call load_Staging_to_Datawarehouse_initialization();//
 
+
+
+
+
+
+
+
 update file_log set log_status = "TR" where id_config=1 ;//
 truncate table data_warehouse;//
+
+
+
+
 
 Delimiter //
 Create procedure load_Staging_to_Datawarehouse()
