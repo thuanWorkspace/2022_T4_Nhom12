@@ -29,11 +29,7 @@ public class ConnectionToFileLogDatabase {
 	}
 	
 	
-/**
-	 * this is the path of file.txt contain user name , pass of account mySQL workbench
-	 */
- //	final static String filePath = "src/resources/account.txt";
-	static  String pathUserPassMySQL = new File("resources/account.txt").getAbsolutePath();
+
               
 	private ConnectionToFileLogDatabase() throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
@@ -71,7 +67,13 @@ public class ConnectionToFileLogDatabase {
 		return con;
 	}
 
-
+	/**
+	 * this is the path of file.txt contain user name , pass of account mySQL workbench
+	 */
+ //	final static String filePath = "src/resources/account.txt";
+	static  String pathUserPassMySQL = new File("resources/account.txt").getAbsolutePath();
+	
+	
 	/**
 	 * the method to get file.txt load to HashMap<String, String> , using BufferedReader.
 	 * the txt.file is file contains user name and password of account MySQL Workbench.
