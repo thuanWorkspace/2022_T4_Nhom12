@@ -127,7 +127,6 @@ public class ConnectionToFileLogDatabase {
 
 			}
 		}
-
 		return map;
 	}
 

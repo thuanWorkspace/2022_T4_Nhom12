@@ -37,7 +37,7 @@ CREATE TABLE data_warehouse (
     expiredate INT
 );
 CREATE TABLE date_dim (
-    date_sk int ,
+    date_sk INT ,
     full_date VARCHAR(500),
     day_since_2005 VARCHAR(500),
     month_since_2005 VARCHAR(500),
@@ -404,6 +404,7 @@ call load_Staging_to_Datawarehouse_initialization();//
 
 update file_log set log_status = "TR" where id_config=1 ;//
 truncate table data_warehouse;//
+select id from data_warehouse where id=1 order by id limit 1;//
 
 
 
@@ -451,3 +452,22 @@ select * from data_warehouse;
 END //
 call load_Staging_to_Datawarehouse();//
 
+-- giữ kết quả datwarehouse table
+CREATE TABLE data_warehouse_temp (
+    id1 INT AUTO_INCREMENT PRIMARY KEY,
+    khuvuc_hethong1 VARCHAR(500) NOT NULL,
+    khuvuc1 VARCHAR(500),
+    hethong1 VARCHAR(500),
+    giamua1 DOUBLE,
+    giaban1 DOUBLE,
+    ngaycapnhat1 INT,
+    isdelete1 VARCHAR(5),
+    expiredate1 INT
+);//
+insert into data_warehouse_temp(id1 ,khuvuc_hethong1,khuvuc1,hethong1,giamua1,giaban1,ngaycapnhat1,isdelete1,expiredate1)
+select id ,khuvuc_hethong,khuvuc,hethong,giamua,giaban,ngaycapnhat,isdelete,expiredate from data_warehouse;//
+
+ 
+insert into data_warehouse (id ,khuvuc_hethong,khuvuc,hethong,giamua,giaban,ngaycapnhat,isdelete,expiredate)
+select id1 ,khuvuc_hethong1,khuvuc1,hethong1,giamua1,giaban1,ngaycapnhat1,isdelete1,expiredate1 from data_warehouse_temp;//
+-- /////////////////////////////////////////

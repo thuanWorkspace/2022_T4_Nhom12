@@ -19,16 +19,24 @@ public class JDBCStatement {
 	 * load_Staging_to_Datawarehouse_initialization(),load_Staging_to_Datawarehouse()
 	 */
 	// procedure 1
-	private static void load_Staging_to_Datawarehouse_initialization() {
+	private static void load_Staging_to_Datawarehouse() {
 		Connection con = ConnectionToFileLogDatabase.getCon();
 		try {
-			CallableStatement callableStatement1 = con
-					.prepareCall("{call load_Staging_to_Datawarehouse_initialization()}");
-			CallableStatement callableStatement2 = con.prepareCall("{call load_Staging_to_Datawarehouse()}");
-
-			ResultSet rs1 = callableStatement1.executeQuery();
-			ResultSet rs2 = callableStatement2.executeQuery();
-
+			PreparedStatement ps1 = con.prepareStatement("select log_status from file_log where log_status ='TR' order by log_status limit 1;");
+			ResultSet rs = ps1.executeQuery();
+			rs.next();
+			String s = rs.getString(1);
+			while (s.equalsIgnoreCase("TR")) {
+				PreparedStatement ps2 = con.prepareStatement("select id from data_warehouse where id=1 order by id limit 1");
+				Boolean flags = ps2.executeQuery().next();
+				if (flags == false) {
+					CallableStatement callableStatement1 = con.prepareCall("{call load_Staging_to_Datawarehouse_initialization()}");
+					ResultSet rs1 = callableStatement1.executeQuery();
+				} else {
+					CallableStatement callableStatement2 = con.prepareCall("{call load_Staging_to_Datawarehouse()}");
+					ResultSet rs2 = callableStatement2.executeQuery();
+				}
+			}
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -146,13 +154,11 @@ public class JDBCStatement {
 				 * 
 				 */
 				cleanArea_System();
+				cleanArea();
 				cleanSystem();
 				cleanDateCreate();
-				cleanArea();
-				load_Staging_to_Datawarehouse_initialization();
-
+				load_Staging_to_Datawarehouse();
 			}
-
 		} catch (Exception e) {
 			// TODO: handle exception
 
