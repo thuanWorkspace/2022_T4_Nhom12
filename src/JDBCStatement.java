@@ -37,6 +37,7 @@ public class JDBCStatement {
 					CallableStatement callableStatement2 = con.prepareCall("{call load_Staging_to_Datawarehouse()}");
 					ResultSet rs2 = callableStatement2.executeQuery();
 				}
+
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -138,8 +139,7 @@ public class JDBCStatement {
 	public static void getPaths() {
 		// step1 :load file to staging
 		Connection con = ConnectionToFileLogDatabase.getCon();
-String sql ="truncate staging;";
-	
+
 		List<String> p = loadPaths();
 
 		try {
@@ -148,7 +148,6 @@ String sql ="truncate staging;";
 			CallableStatement callableStatement = con.prepareCall("{call load_file_to_staging (?)}");
 			for (String p1 : p) {
 				callableStatement.setString(1, p1);
-
 				ResultSet rs = callableStatement.executeQuery();
 				updateStatus("TR", p1);
 				// step2: clean staging
@@ -157,18 +156,14 @@ String sql ="truncate staging;";
 				 * convert values at staging to numbers
 				 * 
 				 */
-				
+
 				cleanArea_System();
 				cleanArea();
 				cleanSystem();
 				cleanDateCreate();
-
-				cleanArea();
-				
-//				load_Staging_to_Datawarehouse_initialization();
-				
-
 				load_Staging_to_Datawarehouse();
+				updateStatus("OK", p1);
+
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -296,16 +291,19 @@ String sql ="truncate staging;";
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 
 		/**
 		 * test method
 		 */
 		JDBCStatement jdbcStatement = new JDBCStatement();
-		System.out.println(jdbcStatement.loadPaths());
-		jdbcStatement.getPaths();
-		jdbcStatement.cleanArea();
-
+//		System.out.println(jdbcStatement.loadPaths());
+//		jdbcStatement.getPaths();
+//		jdbcStatement.cleanArea();
+//		Connection con = ConnectionToFileLogDatabase.getCon();
+//		PreparedStatement ps9 = con.prepareStatement("select id from staging where id=1 order by id limit 1;");
+//		Boolean flags = ps9.executeQuery().next();
+//		System.out.println(flags);
 	}
 
 }
