@@ -21,7 +21,7 @@ public class thuanScriptToGiaVang {
 		Connection con = ConnectionToFileLogDatabase.getCon();
 //		String sql = "select id_config,source_http_url,author,mail,file_name from config where file_name=?;";//cmt
 //		String sql = "select id_config,source_http_url,author,mail,file_name from config where id=1;";
-		String sql = "select id_config,source_http_url,author,mail,file_name,dateTimeNow,PathFileError,PathFileExcel,pathFileCsv,status1,status2,status3,status4 from config where id_config=1;";
+		String sql = "select id_config,source_http_url,author,mail,file_name from config where id_config=1;";
 
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
@@ -35,17 +35,17 @@ public class thuanScriptToGiaVang {
 				mp.put("author", rs.getString("author"));
 				mp.put("mail", rs.getString("mail"));
 				mp.put("file_name", rs.getString("file_name"));
-				mp.put("dateTimeNow", rs.getString("dateTimeNow"));
-				mp.put("PathFileError", rs.getString("PathFileError"));
-
-				// của hiếu thêm vào 
-				mp.put("PathFileExcel", rs.getString("PathFileExcel"));
-				mp.put("pathFileCsv", rs.getString("pathFileCsv"));
-//				
-				mp.put("status1", rs.getString("status1"));
-				mp.put("status2",rs.getString("status2"));
-				mp.put("status3", rs.getString("status3"));
-				mp.put("status4", rs.getString("status4"));
+//				mp.put("dateTimeNow", rs.getString("dateTimeNow"));
+//				mp.put("PathFileError", rs.getString("PathFileError"));
+//
+//				// của hiếu thêm vào
+//				mp.put("PathFileExcel", rs.getString("PathFileExcel"));
+//				mp.put("pathFileCsv", rs.getString("pathFileCsv"));
+////
+//				mp.put("status1", rs.getString("status1"));
+//				mp.put("status2",rs.getString("status2"));
+//				mp.put("status3", rs.getString("status3"));
+//				mp.put("status4", rs.getString("status4"));
 				//
 			
 			
