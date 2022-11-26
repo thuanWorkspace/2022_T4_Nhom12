@@ -1,2 +1,4 @@
 .metadata
 apache-tomcat-9.0.55
+RemoteSystemsTempFiles
+datawarehouse/.settings/

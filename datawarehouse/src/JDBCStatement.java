@@ -6,43 +6,65 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
- * class Scrip 2
- * 
+ * class Script 2 , the method is load file from local into staging table  
+
  * @author Administrator
  *
  */
 public class JDBCStatement {
+	// declare class in thuanScriptToGiaVang.java
+	public static thuanScriptToGiaVang scrip1;// this is class thuanScriptToGiaVang.java
+
+	public static Map<String, String> map = scrip1.loadDefaultConfig();
+
 	/**
 	 * the method is load file from staging to data warehouse??? consists of 2
 	 * procedure
 	 * load_Staging_to_Datawarehouse_initialization(),load_Staging_to_Datawarehouse()
 	 */
 	// procedure 1
+//	Map<String, String> map = scrip1.loadDefaultConfig();
+
 	private static void load_Staging_to_Datawarehouse() {
 		Connection con = ConnectionToFileLogDatabase.getCon();
+
 		try {
-			PreparedStatement ps1 = con.prepareStatement("select log_status from file_log where log_status ='TR' order by log_status limit 1;");
+
+			PreparedStatement ps1 = con.prepareStatement(
+					"select log_status from file_log where log_status =? order by log_status limit 1;");
+			ps1.setString(1, map.get("status3"));
+
 			ResultSet rs = ps1.executeQuery();
 			rs.next();
 			String s = rs.getString(1);
-			if (s.equalsIgnoreCase("TR")) {
-				PreparedStatement ps2 = con.prepareStatement("select id from data_warehouse where id=1 order by id limit 1");
+
+			if (s.equalsIgnoreCase(map.get("status3"))) {
+				PreparedStatement ps2 = con
+						.prepareStatement("select id from data_warehouse where id=1 order by id limit 1");
 				Boolean flags = ps2.executeQuery().next();
 				if (flags == false) {
-					CallableStatement callableStatement1 = con.prepareCall("{call load_Staging_to_Datawarehouse_initialization()}");
+					CallableStatement callableStatement1 = con
+							.prepareCall("{call load_Staging_to_Datawarehouse_initialization(?)}");
+					callableStatement1.setString(1, map.get("status3"));
 					ResultSet rs1 = callableStatement1.executeQuery();
 				} else {
-					CallableStatement callableStatement2 = con.prepareCall("{call load_Staging_to_Datawarehouse()}");
+					CallableStatement callableStatement2 = con.prepareCall("{call load_Staging_to_Datawarehouse(?)}");
+					callableStatement2.setString(1, map.get("status3"));
+
 					ResultSet rs2 = callableStatement2.executeQuery();
 				}
 
 			}
+
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+
 	}
+
 //procedure 2
 
 //	private static void  load_Staging_to_Datawarehouse() {
@@ -75,7 +97,9 @@ public class JDBCStatement {
 			 * return : list paths
 			 */
 
-			CallableStatement callableStatement = con.prepareCall("{call today ()}");// return paths
+			CallableStatement callableStatement = con.prepareCall("{call today (?)}");// return paths
+
+			callableStatement.setString(1, map.get("status2"));
 
 			ResultSet rs = callableStatement.executeQuery();
 
@@ -96,9 +120,9 @@ public class JDBCStatement {
 	}
 
 	/**
-	 * the method is load file from local to the table staging in MySQL .Consists of
-	 * 8 filed : khuvuc_hethong(String),khuvuc(String),gia mua(double) ,gia
-	 * ban(double) ,chenhLech(double),ngaycapnhat(String), Use store procedure
+	 * the method getPaths() is load file from local to the table staging in MySQL
+	 * .Consists of 8 filed : khuvuc_hethong(String),khuvuc(String),gia mua(double)
+	 * ,gia ban(double) ,chenhLech(double),ngaycapnhat(String), Use store procedure
 	 * load_file_to_staging (paths) at MySQL
 	 */
 	// step1 :load file to staging
@@ -143,27 +167,55 @@ public class JDBCStatement {
 		List<String> p = loadPaths();
 
 		try {
-//			ps.setString(1, load);//cmt
-
 			CallableStatement callableStatement = con.prepareCall("{call load_file_to_staging (?)}");
 			for (String p1 : p) {
+
 				callableStatement.setString(1, p1);
 				ResultSet rs = callableStatement.executeQuery();
-				updateStatus("TR", p1);
+
+				/**
+				 * the method is query find the paths of the file successfully loaded into
+				 * staging ,then update log_status from "ER" to "TR"
+				 */
+
+				updateStatus(map.get("status3"), p1);
+
 				// step2: clean staging
 
 				/**
 				 * convert values at staging to numbers
 				 * 
 				 */
-
+				// convert values at columns khuvuc_hethong to numbers
 				cleanArea_System();
-				cleanArea();
-				cleanSystem();
-				cleanDateCreate();
-				load_Staging_to_Datawarehouse();
-				updateStatus("OK", p1);
 
+				// convert values at columns khuvuc to numbers
+				cleanArea();
+
+				// convert values at columns hethong to numbers
+				cleanSystem();
+
+				// convert values at columns ngaycapnhat to numbers
+				cleanDateCreate();
+
+//				load_Staging_to_Datawarehouse_initialization();
+
+				/**
+				 * call method load_Staging_to_Datawarehouse() to load values from staging table
+				 * to data warehouse
+				 */
+				/**
+				 * call method updateStatus(String status, String paths) to update status at
+				 * columns log_status from file_log table in database controller in MySQL
+				 * workbench
+				 */
+
+				/**
+				 * example : TR =>> OK
+				 */
+				load_Staging_to_Datawarehouse();
+
+				updateStatus(map.get("status4"), p1);
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -175,7 +227,7 @@ public class JDBCStatement {
 	/**
 	 * the method is call procedure cleanDateCreate() at mySql call method to
 	 * convert values at column "khuvuc" from table staging in MySQL to numbers, the
-	 * numbers is id of column id of table dim_area using procedure cleanArea()
+	 * numbers is values of column date_sk of date_dim table
 	 * 
 	 */
 	private static void cleanDateCreate() {
@@ -194,7 +246,7 @@ public class JDBCStatement {
 
 	// cleanArea_System
 	/**
-	 * the method to call procedure cleanKhuVucHeThong() at mySql call method to
+	 * the method to call procedure cleanKhuVucHeThong() at MySql call method to
 	 * convert values at column "khuvuc_hethong" from table staging in MySQL to
 	 * numbers , the numbers is values id of column id_khuvuc_hethong of table
 	 * dim_khuvuc_hethong
@@ -245,8 +297,6 @@ public class JDBCStatement {
 	 * call procedure cleanKhuVuc() in MySQL * to convert values at column "khuvuc"
 	 * from table staging in MySQL to numbers, the numbers is id of column id of
 	 * table dim_area using procedure cleanArea()
-	 * 
-	 * 
 	 */
 
 	public static void cleanArea() {
@@ -296,14 +346,9 @@ public class JDBCStatement {
 		/**
 		 * test method
 		 */
+
 		JDBCStatement jdbcStatement = new JDBCStatement();
-//		System.out.println(jdbcStatement.loadPaths());
-//		jdbcStatement.getPaths();
-//		jdbcStatement.cleanArea();
-//		Connection con = ConnectionToFileLogDatabase.getCon();
-//		PreparedStatement ps9 = con.prepareStatement("select id from staging where id=1 order by id limit 1;");
-//		Boolean flags = ps9.executeQuery().next();
-//		System.out.println(flags);
+
 	}
 
 }

@@ -132,11 +132,11 @@ SHOW VARIABLES LIKE "secure_file_privfile_log";//
 -- // create  procedure find day which is today
 -- // create procedure find lines at columns "dateCreate" which hava date today and column "status" is " ER " in table file_log
 -- // procedures today is find lines is today at columns dateCreate  and  status =ER at columns log_status in table file_log 
-create procedure today() 
+create procedure today(statuss varchar(500)) 
 begin
 SELECT paths ,log_status
 FROM file_log 
-WHERE date_create >= CURDATE() and log_status="ER";
+WHERE date_create >= CURDATE() and log_status=statuss;
 end //
 call today();//
 
@@ -159,12 +159,12 @@ tenKhuVuc_HeThong varchar(500)
 );
 //
 -- //create table dim_dateCreate 
-create table dim_dateCreate(
-id_dateCreate varchar(500),
- dateCreate varchar(500)
--- 	primary key 
-);
-//
+-- create table dim_dateCreate(
+-- id_dateCreate varchar(500),
+--  dateCreate varchar(500)
+-- -- 	primary key 
+-- );
+-- //
 
 -- procedure cleankhuvuc() ,Cursor browse line by line (learn about cursor in MySQL Workbench)
 --  cleankhuvuc() is convert  values at columns khuvuc from table staging to number
@@ -285,14 +285,7 @@ begin
    if  id_ngaycapnhat1  then
        		update staging set ngaycapnhat = id_ngaycapnhat1
             where ngaycapnhat=ncn;
-   insert into dim_datecreate(id_dateCreate,dateCreate)
-   values(id_ngaycapnhat1,ncn);
-  else
-     	insert into dim_datecreate(dateCreate)
-        values(ncn);
-    		UPDATE staging SET ngaycapnhat = id_ngaycapnhat1 WHERE ngaycapnhat = ncn;
-        set id_ngaycapnhat1 = (select date_sk from date_dim where date(full_date)= date(ncn) limit 1);
- end if;
+  end if;
    end loop;
     close cur3;
 end //
@@ -302,12 +295,12 @@ call cleanDateCreate();//
 -- create  column contain  variable hardcode from class.java  in  eclipse into config  
 -- create  column contain add variable hardcode in eclipse  into config  
 --  this is variable  contain  hardcode in class MailService.java
-alter table config 
-add column usernameEmail varchar(500) after passwordMySQL ,
-add column passwordEmail varchar(500) after usernameEmail ;//
+-- alter table config 
+-- add column usernameEmail varchar(500) after passwordMySQL ,
+-- add column passwordEmail varchar(500) after usernameEmail ;//
  
 alter table config 
-add  column dateTimeNow varchar(500) after passwordEmail ;//
+add  column dateTimeNow varchar(500) after mail ;//
 
 alter table config 
 add column PathFileError varchar(500) after dateTimeNow ;//
@@ -316,7 +309,7 @@ add column PathFileError varchar(500) after dateTimeNow ;//
 
 -- this is paths save  file excel
 alter table config 
-add column PathFileExcel  varchar(500) after fileNameExcel ;//
+add column PathFileExcel  varchar(500) after PathFileError ;//
 
 -- this is column path save  file csv
 alter table config 
@@ -342,21 +335,21 @@ add column status4  varchar(500) after status3 ;//
 --  //__________________________________hardcode in class ConnectionToFilelog.java
 -- to connection to database we have address driver database  , path to database , user năme and  password of  dababase 
 -- create column user name , password mysql
-alter table config 
-add column usernameMySQL varchar(500) after mail  ,
-add column passwordMySQL   varchar(500) after usernameMySQL ;//
+-- alter table config 
+-- add column usernameMySQL varchar(500) after mail  ,
+-- add column passwordMySQL   varchar(500) after usernameMySQL ;//
 
--- this is column address  driver to  connection to database after column passwordMySQL
-alter table config 
-add column addressDriver  varchar(500) after passwordMySQL ;// 
+-- -- this is column address  driver to  connection to database after column passwordMySQL
+-- alter table config 
+-- add column addressDriver  varchar(500) after passwordMySQL ;// 
 
--- this is column  path connection to database 
-alter table config 
-add column url  varchar(500) after addressDriver ;// 
+-- -- this is column  path connection to database 
+-- alter table config 
+-- add column url  varchar(500) after addressDriver ;// 
 
--- this is path connection to database 
-alter table config 
-add column url  varchar(500) after passwordMySQL ;// 
+-- -- this is path connection to database 
+-- alter table config 
+-- add column url  varchar(500) after passwordMySQL ;// 
 
 -- query  drop column 
 -- alter table config 
@@ -367,7 +360,7 @@ add column url  varchar(500) after passwordMySQL ;//
 
 -- ________________________________________________________________CỦA DANH________________________________________________________________
 Delimiter //
-Create procedure load_Staging_to_Datawarehouse_initialization()
+Create procedure load_Staging_to_Datawarehouse_initialization(statuss varchar( 500))
 begin
 declare done int default 0;
 declare checking varchar(5);
@@ -380,7 +373,7 @@ declare continue handler for not found set done = 1;
 set checking = (select log_status from file_log where id_config = 1 order by log_status desc limit 1);
 set expiredate_temp = (select date_sk from date_dim order by date_sk desc limit 1) ;
 
-if (checking = "TR") then 
+if (checking = statuss) then 
 OPEN staging_cursor;
 my_cur_loop: LOOP
 FETCH staging_cursor INTO khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp;
@@ -412,7 +405,7 @@ select id from data_warehouse where id=1 order by id limit 1;//
 
 
 Delimiter //
-Create procedure load_Staging_to_Datawarehouse()
+Create procedure load_Staging_to_Datawarehouse(statuss varchar(500))
 begin
 declare done INT DEFAULT FALSE;
 declare checking varchar(5);
@@ -423,11 +416,11 @@ declare giamua_temp ,giaban_temp double;
 declare staging_cursor Cursor for select khuvuc_hethong ,khuvuc ,hethong ,giamua ,giaban ,ngaycapnhat FROM staging;
 declare continue handler for not found set done = true;
 
-set checking = (select log_status from file_log where log_status ="TR" order by log_status limit 1);
+set checking = (select log_status from file_log where log_status =statuss order by log_status limit 1);
 set expiredate_temp = (select date_sk from date_dim order by date_sk desc limit 1) ;
 set currentdate = (select date_sk from date_dim where full_date=current_date() limit 1);
 
-if (checking = "TR") then 
+if (checking = statuss) then 
 OPEN staging_cursor;
 my_cur_loop: LOOP
 FETCH staging_cursor INTO khuvuc_hethong_temp ,khuvuc_temp ,hethong_temp ,giamua_temp ,giaban_temp ,ngaycapnhat_temp;
