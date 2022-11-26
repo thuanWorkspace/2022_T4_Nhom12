@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * class Scrip 2
- * 
+ * class Script 2 , the method is load file from local into staging table  
+
  * @author Administrator
  *
  */

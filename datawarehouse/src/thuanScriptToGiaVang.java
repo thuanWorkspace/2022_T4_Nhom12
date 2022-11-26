@@ -142,6 +142,15 @@ public class thuanScriptToGiaVang {
 		int id_config = Integer.parseInt(config.get("id_config"));
 		String author = config.get("author");
 		String source = config.get("source_http_url");
+		String dateTimeNow = config.get("dateTimeNow");
+		String PathFileError = config.get("PathFileError");
+		String PathFileExcel = config.get("PathFileExcel");
+		String pathFileCsv = config.get("pathFileCsv");
+		String status1 = config.get("status1");
+		String status2 = config.get("status2");
+		String status3 = config.get("status3");
+		String status4 = config.get("status4");
+		String status5 = config.get("status5");
 		// edit
 //		String paths = config.get("paths");
 		try {
@@ -160,7 +169,7 @@ public class thuanScriptToGiaVang {
 			 * 
 			 */
 
-			String status2 = config.get("status2");// run Script 1 success, denote get data from website to local
+//			String status2 = config.get("status2");// run Script 1 success, denote get data from website to local
 													// successfully
 
 //			String status1="ER";
@@ -173,8 +182,8 @@ public class thuanScriptToGiaVang {
 			 * convert hardcode to dynamic code
 			 * 
 			 */
-			String status1 = config.get("status1");// status 1 err ,denote Script1 ERR
-			String status5 = config.get("status5");// status5 is paths at column file_log is null
+//			String status1 = config.get("status1");// status 1 err ,denote Script1 ERR
+//			String status5 = config.get("status5");// status5 is paths at column file_log is null
 
 			insertFileLog(id_config, status1, author, status5);
 			// 2. write ERROR infor down error.txt
