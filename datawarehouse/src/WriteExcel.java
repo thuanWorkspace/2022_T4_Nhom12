@@ -37,6 +37,7 @@ public class WriteExcel {
     static ArrayList<Gold> lists = new ArrayList<Gold>();
 
     public static void writeExcel(List<Gold> golds, String excelFilePath) throws IOException {
+//    public static void writeExcel(List<Gold> golds, List  excelFilePath) throws IOException {
 
         // Create Workbook
         Workbook workbook = getWorkbook(excelFilePath);

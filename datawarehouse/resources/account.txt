@@ -1,2 +1,2 @@
 usernameMysql root
-passMysql 1234
+passMysql 123456

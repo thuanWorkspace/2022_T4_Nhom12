@@ -12,7 +12,8 @@ public class Main {
 	public static JDBCStatement scrip2;
 
 	public static void main(String[] args) throws Exception {
-		scrip1.algoDefault();
+//		scrip1.algoDefault();
+		scrip1.runConfig();
 		scrip2.getPaths();
 
 	}
@@ -26,7 +27,7 @@ public class Main {
 	static String load = "hieu";
 
 	public String valuesConfig(String columns) {
-    //	String name = columns;
+		// String name = columns;
 		Connection con = ConnectionToFileLogDatabase.getCon();
 		String sql = "select id_config,source_http_url,author,mail,file_name from config where file_name=?;";
 		try {
