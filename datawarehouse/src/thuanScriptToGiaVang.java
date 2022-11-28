@@ -32,7 +32,7 @@ public class thuanScriptToGiaVang {
 	 */
 	public static Map<String, String> loadDefaultConfig() {
 		Connection con = ConnectionToFileLogDatabase.getCon();
-		String sql = "select id_config,source_http_url,author,mail,file_name,dateTimeNow,PathFileError,PathFileExcel,pathFileCsv,status1,status2,status3,status4,status5 from config where id_config=1 ;";
+		String sql = "select id_config,source_http_url,author,mail,file_name,dateTimeNow,PathFileError,PathFileExcel,pathFileCsv,status1,status2,status3,status4,status5 from controller.config where id_config=1 ;";
 		//
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
@@ -88,7 +88,7 @@ public class thuanScriptToGiaVang {
 		 * 
 		 * @return map
 		 */
-		String sql = "select id_config,source_http_url,author,mail,file_name,dateTimeNow,PathFileError,PathFileExcel,pathFileCsv,status1,status2,status3,status4,status5 from config;";
+		String sql = "select id_config,source_http_url,author,mail,file_name,dateTimeNow,PathFileError,PathFileExcel,pathFileCsv,status1,status2,status3,status4,status5 from controller.config;";
 
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
@@ -265,7 +265,7 @@ public class thuanScriptToGiaVang {
 
 	public static void insertFileLog(int id_config, String status, String author, String path) {
 		Connection con = ConnectionToFileLogDatabase.getCon();
-		String sql = "insert into file_log(id_config,log_status,author,paths) values(?,?,?,?);";
+		String sql = "insert into controller.file_log(id_config,log_status,author,paths) values(?,?,?,?);";
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setInt(1, id_config);

@@ -20,7 +20,7 @@ public class DatawarehouseDao {
     public static List<Integer> getAreas_Systems_byCode() {
         List<Integer> re = new ArrayList<>();
         try {
-            PreparedStatement ps = conn.prepareStatement("select distinct khuvuc_hethong from data_warehouse  ;");
+            PreparedStatement ps = conn.prepareStatement("select distinct khuvuc_hethong from data_warehouse.data_warehouse  ;");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 re.add(rs.getInt("khuvuc_hethong"));
@@ -34,7 +34,7 @@ public class DatawarehouseDao {
     public static List<String> getAreas_Systems_byString() {
         List<String> re = new ArrayList<>();
         try {
-            PreparedStatement ps = conn.prepareStatement("select distinct tenKhuVuc_HeThong from data_warehouse join dim_khuvuc_hethong on khuvuc_hethong=id_khuvuc_hethong;");
+            PreparedStatement ps = conn.prepareStatement("select distinct tenKhuVuc_HeThong from data_warehouse.data_warehouse join staging.dim_khuvuc_hethong on khuvuc_hethong=id_khuvuc_hethong;");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 re.add(rs.getString("tenKhuVuc_HeThong"));
@@ -49,7 +49,7 @@ public class DatawarehouseDao {
     public static List<Integer> getAreas_byCode() {
         List<Integer> re = new ArrayList<>();
         try {
-            PreparedStatement ps = conn.prepareStatement("select distinct khuvuc from data_warehouse;");
+            PreparedStatement ps = conn.prepareStatement("select distinct khuvuc from data_warehouse.data_warehouse;");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 re.add(rs.getInt("khuvuc"));
@@ -63,7 +63,7 @@ public class DatawarehouseDao {
     public static List<String> getAreas_byString() {
         List<String> re = new ArrayList<>();
         try {
-            PreparedStatement ps = conn.prepareStatement("select distinct tenKhuVuc from data_warehouse join dim_khuvuc on khuvuc=id_khuvuc;");
+            PreparedStatement ps = conn.prepareStatement("select distinct tenKhuVuc from data_warehouse.data_warehouse join staging.dim_khuvuc on khuvuc=id_khuvuc;");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 re.add(rs.getString("tenKhuVuc"));
@@ -78,7 +78,7 @@ public class DatawarehouseDao {
     public static List<Integer> getSystems_byCode() {
         List<Integer> re = new ArrayList<>();
         try {
-            PreparedStatement ps = conn.prepareStatement("select distinct hethong from data_warehouse;");
+            PreparedStatement ps = conn.prepareStatement("select distinct hethong from data_warehouse.data_warehouse;");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 re.add(rs.getInt("hethong"));
@@ -92,7 +92,7 @@ public class DatawarehouseDao {
     public static List<String> getSystems_byString() {
         List<String> re = new ArrayList<>();
         try {
-            PreparedStatement ps = conn.prepareStatement("select distinct tenHeThong from data_warehouse join dim_hethong on hethong=id_heThong;");
+            PreparedStatement ps = conn.prepareStatement("select distinct tenHeThong from data_warehouse.data_warehouse join staging.dim_hethong on hethong=id_heThong;");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 re.add(rs.getString("tenHeThong"));
@@ -107,7 +107,7 @@ public class DatawarehouseDao {
     public static List<Integer> getCreateDates_byCode() {
         List<Integer> re = new ArrayList<>();
         try {
-            PreparedStatement ps = conn.prepareStatement("select distinct ngaycapnhat from data_warehouse;");
+            PreparedStatement ps = conn.prepareStatement("select distinct ngaycapnhat from data_warehouse.data_warehouse;");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 re.add(rs.getInt("ngaycapnhat"));
@@ -118,10 +118,10 @@ public class DatawarehouseDao {
         return re;
     }
 
-    public static String getCreateDate_byString(String id_khuvuc, String id_hethong) {
+    public static String getCreateFirstDate_byString(String id_khuvuc, String id_hethong) {
         String re = null;
         try {
-            PreparedStatement ps = conn.prepareStatement("select distinct full_date from data_warehouse join date_dim on ngaycapnhat=date_sk where khuvuc=? && hethong=?;");
+            PreparedStatement ps = conn.prepareStatement("select distinct full_date from data_warehouse.data_warehouse join staging.date_dim on ngaycapnhat=date_sk where khuvuc=? && hethong=?;");
             ps.setString(1, id_khuvuc);
             ps.setString(2, id_hethong);
             ResultSet rs = ps.executeQuery();
@@ -136,6 +136,7 @@ public class DatawarehouseDao {
 //                }
 //                SimpleDateFormat dt1 = new SimpleDateFormat("dd/MM/yyyy");
                 re = rs.getString("full_date");
+                break;
             }
         } catch (Exception e) {
             // TODO: handle exception
@@ -163,14 +164,13 @@ public class DatawarehouseDao {
                     break;
                 }
             }
-            System.out.println(option);
             if (option == 0) {
-                ps = conn.prepareStatement("select distinct giamua from data_warehouse join date_dim on ngaycapnhat=date_sk where khuvuc=? && hethong=? && full_date=?;");
+                ps = conn.prepareStatement("select distinct giamua from data_warehouse.data_warehouse join staging.date_dim on ngaycapnhat=date_sk where khuvuc=? && hethong=? && full_date=?;");
                 convertKhuVucToID(area);
                 convertHeThongToId(system);
             }
             if (option == 2) {
-                ps = conn.prepareStatement("select distinct giamua from data_warehouse join date_dim on ngaycapnhat=date_sk join dim_khuvuc on khuvuc=id_khuvuc join dim_hethong on hethong=id_heThong where tenkhuvuc=? && tenHeThong=? && full_date=?;");
+                ps = conn.prepareStatement("select distinct giamua from data_warehouse.data_warehouse join staging.date_dim on ngaycapnhat=date_sk join staging.dim_khuvuc on khuvuc=id_khuvuc join staging.dim_hethong on hethong=id_heThong where tenkhuvuc=? && tenHeThong=? && full_date=?;");
 
             }
             ps.setString(1, area);
@@ -185,7 +185,7 @@ public class DatawarehouseDao {
 //                for (int b = 0; b < getAreas_Systems().size(); b++) {
 //                    for (int c = 0; c < getAreas_Systems().size(); c++) {
 //                        if (area == getAreas().get(a) && system == getSystems().get(b) && date == getToDay().get(c)) {
-//                            PreparedStatement ps = conn.prepareStatement("select distinct giamua from data_warehouse where khuvuc=? && hethong=? && ngaycapnhat=?;");
+//                            PreparedStatement ps = conn.prepareStatement("select distinct giamua from data_warehouse.data_warehouse where khuvuc=? && hethong=? && ngaycapnhat=?;");
 //                            ps.setString(1, a + "");
 //                            ps.setString(2, b + "");
 //                            ps.setString(3, c + "");
@@ -221,12 +221,11 @@ public class DatawarehouseDao {
                     break;
                 }
             }
-            System.out.println(option);
             if (option == 0) {
-                ps = conn.prepareStatement("select distinct giaban from data_warehouse join date_dim on ngaycapnhat=date_sk where khuvuc=? && hethong=? && full_date=?;");
+                ps = conn.prepareStatement("select distinct giaban from data_warehouse.data_warehouse join staging.date_dim on ngaycapnhat=date_sk where khuvuc=? && hethong=? && full_date=?;");
             }
             if (option == 2) {
-                ps = conn.prepareStatement("select distinct giaban from data_warehouse join date_dim on ngaycapnhat=date_sk join dim_khuvuc on khuvuc=id_khuvuc join dim_hethong on hethong=id_heThong where tenkhuvuc=? && tenHeThong=? && full_date=?;");
+                ps = conn.prepareStatement("select distinct giaban from data_warehouse.data_warehouse join staging.date_dim on ngaycapnhat=date_sk join staging.dim_khuvuc on khuvuc=id_khuvuc join staging.dim_hethong on hethong=id_heThong where tenkhuvuc=? && tenHeThong=? && full_date=?;");
             }
             ps.setString(1, area);
             ps.setString(2, system);
@@ -264,7 +263,7 @@ public class DatawarehouseDao {
     public static int convertDateToIdId(String date) {
         int re = 0;
         try {
-            PreparedStatement ps = conn.prepareStatement("select distinct ngaycapnhat from data_warehouse join date_dim on ngaycapnhat=date_sk where full_date=?;");
+            PreparedStatement ps = conn.prepareStatement("select distinct ngaycapnhat from data_warehouse.data_warehouse join staging.date_dim on ngaycapnhat=date_sk where full_date=?;");
             ps.setString(1, date);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -285,10 +284,11 @@ public class DatawarehouseDao {
         System.out.println(getSystems_byCode());
         System.out.println(getSystems_byString());
 //        System.out.println(getCreateDates_byCode());
-        System.out.println(getCreateDate_byString("1","2"));
+        System.out.println(getCreateFirstDate_byString("1", "2"));
 //        System.out.println(convertKhuVucToID("Hà Nội"));
 //        System.out.println(convertHeThongToId("SJC"));
 //        System.out.println(convertDateToIdId("2022-11-25"));
+        //  Cách lấy dữ liệu mẫu
         System.out.println(buyPrice("1", "1", "2022-11-24"));
         System.out.println(sellPrice("1", "2", "2022-11-25"));
     }
