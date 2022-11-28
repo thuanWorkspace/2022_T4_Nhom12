@@ -8,18 +8,14 @@ import java.util.Map;
 
 public class Main {
 
-	public static thuanScriptToGiaVang scrip1;
-	public static JDBCStatement scrip2;
+    public static thuanScriptToGiaVang scrip1;
+    public static JDBCStatement scrip2;
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 //		scrip1.algoDefault();
-		scrip1.runConfig();
-		scrip2.getPaths();
-
-	}
-
-	
-
+        scrip1.runConfig();
+        scrip2.getPaths();
+    }
 
 
 }
