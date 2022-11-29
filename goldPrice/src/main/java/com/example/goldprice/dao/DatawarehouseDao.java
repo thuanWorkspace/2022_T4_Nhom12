@@ -296,21 +296,26 @@ public class DatawarehouseDao {
     }
 
     public static ArrayList<Gold> listGold(String khuvuc, String hethong) {
-        return null;
+        ArrayList<Gold> re = null;
+        for (int i = 0; i < getAreas_byString().size() - 1 ; i++){
+        }
+//        Gold gold = new Gold()
+        return re;
     }
+
     public static ArrayList<Gold> listGoldDefault(String khuvuc, String hethong) {
-        Gold g1 = new Gold(1,1,60,
-                70,6000,60001,
-                "a","a","26-11-2022","27-11-2022");
-        Gold g2 = new Gold(1,1,65,
-                67,6001,60002,
-                "a","a","27-11-2022","28-11-2022");
-        Gold g3 = new Gold(1,1,66,
-                68,6002,60003,
-                "a","a","28-11-2022","29-11-2022");
-        Gold g4 = new Gold(1,1,50,
-                64,6003,60004,
-                "a","a","29-11-2022","30-11-2022");
+        Gold g1 = new Gold(1, 1, 60,
+                70, 6000, 60001,
+                "a", "a", "26-11-2022", "27-11-2022");
+        Gold g2 = new Gold(1, 1, 65,
+                67, 6001, 60002,
+                "a", "a", "27-11-2022", "28-11-2022");
+        Gold g3 = new Gold(1, 1, 66,
+                68, 6002, 60003,
+                "a", "a", "28-11-2022", "29-11-2022");
+        Gold g4 = new Gold(1, 1, 50,
+                64, 6003, 60004,
+                "a", "a", "29-11-2022", "30-11-2022");
         ArrayList<Gold> list = new ArrayList<Gold>();
         list.add(g2);
         list.add(g4);
