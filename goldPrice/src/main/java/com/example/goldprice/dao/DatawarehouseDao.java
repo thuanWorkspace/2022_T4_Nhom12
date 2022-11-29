@@ -5,11 +5,8 @@ import com.example.goldprice.controller.Gold;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +19,7 @@ public class DatawarehouseDao {
     public static List<Integer> getAreas_Systems_byCode() {
         List<Integer> re = new ArrayList<>();
         try {
-            PreparedStatement ps = conn.prepareStatement("select distinct khuvuc_hethong from data_warehouse.data_warehouse  ;");
+            PreparedStatement ps = conn.prepareStatement("select distinct khuvuc_hethong from data_warehouse.data_warehouse;");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 re.add(rs.getInt("khuvuc_hethong"));
@@ -279,38 +276,40 @@ public class DatawarehouseDao {
 
     public static void main(String[] args) {
         DatawarehouseDao datawarehouseDao = new DatawarehouseDao();
-        System.out.println(getAreas_Systems_byCode());
-        System.out.println(getAreas_Systems_byString());
-        System.out.println(getAreas_byCode());
-        System.out.println(getAreas_byString());
-        System.out.println(getSystems_byCode());
-        System.out.println(getSystems_byString());
+//        System.out.println(getAreas_Systems_byCode());
+//        System.out.println(getAreas_Systems_byString());
+//        System.out.println(getAreas_byCode());
+//        System.out.println(getAreas_byString());
+//        System.out.println(getSystems_byCode());
+//        System.out.println(getSystems_byString());
 //        System.out.println(getCreateDates_byCode());
-        System.out.println(getCreateFirstDate_byString("1", "2"));
+//        System.out.println(getCreateFirstDate_byString("1", "2"));
 //        System.out.println(convertKhuVucToID("Hà Nội"));
 //        System.out.println(convertHeThongToId("SJC"));
 //        System.out.println(convertDateToIdId("2022-11-25"));
         //  Cách lấy dữ liệu mẫu
-        System.out.println(buyPrice("1", "1", "2022-11-24"));
-        System.out.println(sellPrice("1", "2", "2022-11-25"));
+//        System.out.println(buyPrice("1", "1", "2022-11-24"));
+//        System.out.println(sellPrice("1", "2", "2022-11-25"));
+        System.out.println(listGold("Quảng Nam", "SJC"));
     }
 
     public static ArrayList<Gold> listGold(String khuvuc, String hethong) {
-        ArrayList<Gold> re = null;
+        ArrayList<Gold> re = new ArrayList<Gold>();
+        int count = 0;
         Gold gold = new Gold(0, 0, 0, 0, 0, 0, null, null, null, null);
         try {
             PreparedStatement ps = conn.prepareStatement("select distinct khuvuc,hethong,giamua,giaban,ngaycapnhat,expiredate,full_date,(select full_date from staging.date_dim join data_warehouse.data_warehouse on date_sk=expiredate order by full_date desc limit 1) as ngayhethan\n" +
                     "from data_warehouse.data_warehouse join staging.date_dim on ngaycapnhat=date_sk join staging.dim_khuvuc on khuvuc=id_khuvuc join staging.dim_hethong on hethong=id_heThong where tenkhuvuc=? && tenHeThong=?;");
-            ps.setString(1, khuvuc);
-            ps.setString(2, hethong);
+            ps.setString(1, "\"" + khuvuc + "\"");
+            ps.setString(2, "\"" + hethong + "\"");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                int id_kv=rs.getInt("khuvuc");
-                int id_ht=rs.getInt("hethong");
-                int giamua=rs.getInt("giamua");
-                int giaban=rs.getInt("giaban");
-                int id_ngaycapnhat=rs.getInt("ngaycapnhat");
-                int id_ngayhethan=rs.getInt("expiredate");
+                int id_kv = rs.getInt("khuvuc");
+                int id_ht = rs.getInt("hethong");
+                int giamua = rs.getInt("giamua");
+                int giaban = rs.getInt("giaban");
+                int id_ngaycapnhat = rs.getInt("ngaycapnhat");
+                int id_ngayhethan = rs.getInt("expiredate");
                 //
                 String date_s = rs.getString("full_date");
                 SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
@@ -321,12 +320,21 @@ public class DatawarehouseDao {
                     throw new RuntimeException(e);
                 }
                 SimpleDateFormat dt1 = new SimpleDateFormat("dd/MM/yyyy");
-                String ngaycapnhat
+                String ngaycapnhat = dt1.format(date);
                 //
-                String ngayhethan=rs.getString("ngayhethan");
-
-                //
-                Gold gold = new Gold(id_kv, id_ht, giamua,giaban , id_ngaycapnhat, id_ngayhethan, khuvuc, hethong, null, null);
+                String date_s2 = rs.getString("ngayhethan");
+                SimpleDateFormat dt2 = new SimpleDateFormat("yyyy-MM-dd");
+                Date date2 = null;
+                try {
+                    date2 = dt2.parse(date_s2);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+                SimpleDateFormat dt3 = new SimpleDateFormat("dd/MM/yyyy");
+                String ngayhethan = dt3.format(date2);
+                gold = new Gold(id_kv, id_ht, giamua, giaban, id_ngaycapnhat, id_ngayhethan, khuvuc, hethong, ngaycapnhat, ngayhethan);
+//                System.out.println(id_kv+" "+id_ht+" "+giamua+" "+giaban+" "+id_ngaycapnhat+" "+id_ngayhethan+" "+khuvuc+" "+hethong+" "+ngaycapnhat+" "+ngayhethan);
+                re.add(gold);
             }
         } catch (Exception e) {
             // TODO: handle exception
