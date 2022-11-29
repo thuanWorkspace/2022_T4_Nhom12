@@ -425,3 +425,6 @@ CLOSE staging_cursor;
 END IF;
 END //
 call load_Staging_to_Datawarehouse();//
+
+select distinct khuvuc,hethong,giamua,giaban,ngaycapnhat,expiredate,tenkhuvuc,tenHeThong,full_date,(select full_date from staging.date_dim join data_warehouse.data_warehouse on date_sk=expiredate order by full_date desc limit 1) as ngayhethan
+from data_warehouse.data_warehouse join staging.date_dim on ngaycapnhat=date_sk join staging.dim_khuvuc on khuvuc=id_khuvuc join staging.dim_hethong on hethong=id_heThong;//

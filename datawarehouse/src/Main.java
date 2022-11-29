@@ -16,6 +16,4 @@ public class Main {
         scrip1.runConfig();
         scrip2.getPaths();
     }
-
-
 }
