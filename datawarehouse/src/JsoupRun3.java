@@ -9,15 +9,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTAreaChart;
 
 public class JsoupRun3 {
 	public static thuanScriptToGiaVang scrip1;
+	public static List<Map<String, String>> config = scrip1.getConfigs();
+
 	public String tgCapNhat = null;
 
 	// thuan edit thuan1 master
@@ -87,20 +91,50 @@ public class JsoupRun3 {
 	}
 
 	public static String fileExcelPath_Xlsx() {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("ddMMyy_HH-mm");
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("ddMMyy_HH-mm-ss");
 		LocalDateTime now = LocalDateTime.now();
-		String fileName = "DataWareHouse_" + dtf.format(now).replaceAll("-", "h");
+		String fileName = dtf.format(now).replaceAll("-", "h");
+		// "DataWareHouse_" +
 //        String changePath = "D:\\DataWareHouse\\datawarehouse\\";// Nhớ đổi đường dẫn
 		//
+		/**
+		 * dyamic hard code path excel,
+		 */
+		Map<String, String> config = scrip1.loadDefaultConfig();
+		String changePath = config.get("PathFileExcel");
 
-		Map<String, String> pathFile = scrip1.loadDefaultConfig();
-		String changePath = pathFile.get("PathFileExcel");
-//        
+		String pathFileExcel = new File(changePath + fileName + ".xlsx").getAbsolutePath();
 
+///
 //
-		String pathFileExcel = changePath + fileName + ".xlsx";
+//		String pathFileExcel = changePath + fileName + ".xlsx";
 		return pathFileExcel;
+
 	}
+
+	/**
+	 * example draft get excel paths
+	 */
+	public static List<String> excelPahts() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("ddMMyy_HH-mm-ss");
+		LocalDateTime now = LocalDateTime.now();
+		String fileName = dtf.format(now).replaceAll("-", "h");
+		List<Map<String, String>> config = scrip1.getConfigs();
+
+		List<String> excelPaths = new ArrayList<>();
+
+		for (Map<String, String> map : config) {
+			String path = new File(map.get("PathFileExcel") + fileName + ".xlsx").getAbsolutePath();
+//			excelPaths.add(map.get("PathFileExcel"));
+			excelPaths.add(path);
+
+		}
+//		LIst pathFileExcel = new File(excelPaths + fileName + ".xlsx").getAbsolutePath();
+
+		return excelPaths;
+
+	}
+//end
 
 	// dd-MM-yy_HH-mm-ss
 	public static String Write(ArrayList<Gold> data) {
@@ -111,20 +145,20 @@ public class JsoupRun3 {
 
 		String fileName = dtf1.format(now1);// cmt
 
-//them vào test dyamic code 
-//		Map<String, String> pathFile = scrip1.loadDefaultConfig();
-//		String pathFileCsv = pathFile.get("pathFileCsv");
+		/**
+		 * dyamic hard code path csv file
+		 */
+		Map<String, String> config = scrip1.loadDefaultConfig();
+		String pathFileCsv = config.get("pathFileCsv");
 //        System.out.println(pathFileCsv);
 
 		//
 
 //        File f = new File("D:\\DataWareHouse\\datawarehouse\\" + fileName + ".csv");
-		String paths = "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\";
+//		String paths = "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\";
 
-//        File f = new File(paths + fileName + ".csv");// fileName
 //		File f = new File(paths + pathFileCsv + fileName + ".csv");// fileName
-		File f = new File(paths +fileName + ".csv");// fileName
-
+		File f = new File(pathFileCsv + " " + fileName + ".csv");// fileName
 
 		String path = f.getAbsolutePath();
 		System.out.println(f.getAbsolutePath());
@@ -181,10 +215,29 @@ public class JsoupRun3 {
 	public static void main(String[] args) throws IOException {
 		JsoupRun3 js = new JsoupRun3();
 		String source = "https://giavang.org/";// the path is just for test method
-		ArrayList<Gold> data = js.crawlData(source);
 		String filePath = fileExcelPath_Xlsx();
+		ArrayList<Gold> data = js.crawlData(source);
+
 		WriteExcel.writeExcel(data, filePath);
 		js.Write(data);
+		
+		
+		
+		
+		/**
+		 * test method  excelPahts()
+		 */
+//
+//		for (String path : excelPahts()) {
+////			System.out.println(path);
+//			JsoupRun3 js = new JsoupRun3();
+//			String source = "https://giavang.org/";// the path is just for test method
+//			ArrayList<Gold> data = js.crawlData(source);
+//			
+//			WriteExcel.writeExcel(data, path);
+//			js.Write(data);
+//
+//		}
 
 	}
 }
