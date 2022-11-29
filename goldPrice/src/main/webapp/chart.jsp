@@ -19,7 +19,7 @@
 
 </head>
 <body>
-<a href="index.jsp"> back </a>
+<a href="TrangChu"> back </a>
 <div class="box" style="width:90rem" style="height:90rem">
     <h1>biểu đồ thể hiện đường của khu vực: <%=request.getParameter("khuvuc") %>, hệ thống: <%=request.getParameter("hethong")%></h1>
     <canvas id="myChart"></canvas>
