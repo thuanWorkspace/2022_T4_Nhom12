@@ -1,4 +1,5 @@
-<%--
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="com.example.goldprice.controller.Gold" %><%--
   Created by IntelliJ IDEA.
   User: acer
   Date: 26/11/2022
@@ -6,13 +7,18 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<% ArrayList< Gold> list = (ArrayList<Gold>) request.getAttribute("list");%>
+
 <html>
 <head>
     <title>Chartiii</title>
     <script> src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.1/chart.min.js" </script>
-
+    <% if (list==null || list.isEmpty()){%>
+    can't not find any information!
+    <%}%>
 </head>
 <body>
+<a href="index.jsp"> back </a>
 <div class="box" style="width:90rem" style="height:90rem">
     <canvas id="myChart"></canvas>
 </div>
