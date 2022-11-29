@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * this is ???
- * 
+ *
  * @author Administrator
  *
  */
@@ -27,13 +27,13 @@ public class thuanScriptToGiaVang {
 	/**
 	 * the method is query gets columns in table config , after gets us into
 	 * hashMap<String ,String>
-	 * 
+	 *
 	 * @return map exxamp : the columns name at config is "id_config ", get it
 	 */
 	public static Map<String, String> loadDefaultConfig() {
 		Connection con = ConnectionToFileLogDatabase.getCon();
-		String sql = "select id_config,source_http_url,author,mail,file_name,dateTimeNow,PathFileError,PathFileExcel,pathFileCsv,status1,status2,status3,status4,status5 from controller.config where id_config=1 ;";
-		//
+		String sql = "select id_config,source_http_url,author,mail,file_name,dateTimeNow,PathFileError,PathFileExcel,pathFileCsv,status1,status2,status3,status4,status5 from controller.config ;";
+		//where id_config=1
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
 //			ps.setString(1, load);//cmt
@@ -70,7 +70,7 @@ public class thuanScriptToGiaVang {
 
 	/**
 	 * the method is get Map<String, String> at loadDefaultConfig() add into List
-	 * 
+	 *
 	 * @return list
 	 */
 	// lấy config từng dòng bỏ vào list
@@ -85,7 +85,7 @@ public class thuanScriptToGiaVang {
 		/**
 		 * the method is query find columns in table config where id =1 , after get it
 		 * into hashMap<String ,String>
-		 * 
+		 *
 		 * @return map
 		 */
 		String sql = "select id_config,source_http_url,author,mail,file_name,dateTimeNow,PathFileError,PathFileExcel,pathFileCsv,status1,status2,status3,status4,status5 from controller.config;";
@@ -157,7 +157,7 @@ public class thuanScriptToGiaVang {
 			JsoupRun3 js3 = new JsoupRun3();
 //			js3.crawlData(source);
 			ArrayList<Gold> data = js3.crawlData(source);
-//			String path = "path"; 
+//			String path = "path";
 //			 js3.Write(data);
 			String path = js3.Write(data);
 
@@ -165,7 +165,7 @@ public class thuanScriptToGiaVang {
 			/**
 			 * convert hard code to dynamic code ,status 2 when load run script not
 			 * successfully , ERR
-			 * 
+			 *
 			 */
 
 //			String status2 = config.get("status2");// run Script 1 success, denote get data from website to local
@@ -179,7 +179,7 @@ public class thuanScriptToGiaVang {
 			// 1. write err status
 			/**
 			 * convert hardcode to dynamic code
-			 * 
+			 *
 			 */
 //			String status1 = config.get("status1");// status 1 err ,denote Script1 ERR
 //			String status5 = config.get("status5");// status5 is paths at column file_log is null
@@ -214,7 +214,7 @@ public class thuanScriptToGiaVang {
 			JsoupRun3 js3 = new JsoupRun3();
 //			js3.crawlData(source);
 			ArrayList<Gold> data = js3.crawlData(source);
-//			String path = "path"; 
+//			String path = "path";
 //			 js3.Write(data);
 			String path = js3.Write(data);
 
@@ -222,7 +222,7 @@ public class thuanScriptToGiaVang {
 			/**
 			 * convert hard code to dynamic code ,status 2 when load run script not
 			 * successfully , ERR
-			 * 
+			 *
 			 */
 
 			String status2 = config.get("status2");// run Script 1 success, denote get data from website to local
@@ -236,7 +236,7 @@ public class thuanScriptToGiaVang {
 			// 1. write err status
 			/**
 			 * convert hardcode to dynamic code
-			 * 
+			 *
 			 */
 			String status1 = config.get("status1");// status 1 err ,denote Script1 ERR
 			String status5 = config.get("status5");// status5 is paths at column file_log is null

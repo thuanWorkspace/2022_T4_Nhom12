@@ -188,9 +188,9 @@ public class JsoupRun3 {
 //		File f = new File("C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\" + fileName + ".csv");
 //		String pathss = f.getAbsolutePath();
 ////		System.out.println(pathss);
-//		// 
-//		
-//		
+//		//
+//
+//
 //		try {
 //			FileOutputStream fos = new FileOutputStream(f);
 //			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy_HH-mm-ss");
@@ -220,10 +220,10 @@ public class JsoupRun3 {
 
 		WriteExcel.writeExcel(data, filePath);
 		js.Write(data);
-		
-		
-		
-		
+
+
+
+
 		/**
 		 * test method  excelPahts()
 		 */
@@ -233,7 +233,7 @@ public class JsoupRun3 {
 //			JsoupRun3 js = new JsoupRun3();
 //			String source = "https://giavang.org/";// the path is just for test method
 //			ArrayList<Gold> data = js.crawlData(source);
-//			
+//
 //			WriteExcel.writeExcel(data, path);
 //			js.Write(data);
 //
