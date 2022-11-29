@@ -10,13 +10,14 @@
 <br/>
 <a href="hello-servlet">Hello Servlet</a>
 <a href="GetPriceBySystemAndArea">getprice</a>
-<form action="">
-    khuvuc: <input type="text">
-    hethong: <input type="text">
+<form action="ChartServlet" method="get">
+    khuvuc: <input type="text" name="khuvuc">
+    hethong: <input type="text" name="hethong">
     <div class="button_icon">
-        <a href="index.jsp">ok
+<%--        <a href="ChartServlet.jsp">ok--%>
 <%--            <button id="myBtn">Open</button>--%>
-        </a>
+<%--        </a>--%>
+        <button  type="submit"> OK</button>
     </div>
 </form>
 </body>
