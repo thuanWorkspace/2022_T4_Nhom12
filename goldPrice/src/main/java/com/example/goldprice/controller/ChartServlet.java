@@ -17,7 +17,7 @@ public class ChartServlet extends HttpServlet {
         String hethong = request.getParameter("hethong");
         System.out.println("KV: "+khuvuc);
         System.out.println("HT: "+hethong);
-        ArrayList<Gold> list = DatawarehouseDao.listGoldDefault(khuvuc,hethong);
+        ArrayList<Gold> list = DatawarehouseDao.listGold(khuvuc,hethong);
         list.sort((o1, o2) -> {
             if(o1.getId_ngayhethan()<o2.getId_ngayhethan())
                 return -1;

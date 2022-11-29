@@ -217,7 +217,7 @@ iterate loop_label ;
 -- // không được 
 end loop;
 end //
-call load_file_to_staging ("C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\25-11-22_19-30-25.csv");// -- //Cập nhật lại đường link
+call load_file_to_staging ("C:\ProgramData\MySQL\MySQL Server 8.0\Uploads\ 25-11-22_19-30-25.csv");// -- //Cập nhật lại đường link
 
 -- // create  procedure find day which is today
 -- // create procedure find lines at columns "dateCreate" which hava date today and column "status" is " ER " in table file_log
@@ -229,7 +229,6 @@ FROM controller.file_log
 WHERE date_create >= CURDATE() and log_status=statuss;
 end //
 call today();//
-
 
 -- //
 

@@ -5,11 +5,8 @@ import com.example.goldprice.controller.Gold;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +19,7 @@ public class DatawarehouseDao {
     public static List<Integer> getAreas_Systems_byCode() {
         List<Integer> re = new ArrayList<>();
         try {
-            PreparedStatement ps = conn.prepareStatement("select distinct khuvuc_hethong from data_warehouse.data_warehouse  ;");
+            PreparedStatement ps = conn.prepareStatement("select distinct khuvuc_hethong from data_warehouse.data_warehouse;");
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 re.add(rs.getInt("khuvuc_hethong"));
@@ -279,56 +276,103 @@ public class DatawarehouseDao {
 
     public static void main(String[] args) {
         DatawarehouseDao datawarehouseDao = new DatawarehouseDao();
-        System.out.println(getAreas_Systems_byCode());
-        System.out.println(getAreas_Systems_byString());
-        System.out.println(getAreas_byCode());
-        System.out.println(getAreas_byString());
-        System.out.println(getSystems_byCode());
-        System.out.println(getSystems_byString());
+//        System.out.println(getAreas_Systems_byCode());
+//        System.out.println(getAreas_Systems_byString());
+//        System.out.println(getAreas_byCode());
+//        System.out.println(getAreas_byString());
+//        System.out.println(getSystems_byCode());
+//        System.out.println(getSystems_byString());
 //        System.out.println(getCreateDates_byCode());
-        System.out.println(getCreateFirstDate_byString("1", "2"));
+//        System.out.println(getCreateFirstDate_byString("1", "2"));
 //        System.out.println(convertKhuVucToID("Hà Nội"));
 //        System.out.println(convertHeThongToId("SJC"));
 //        System.out.println(convertDateToIdId("2022-11-25"));
         //  Cách lấy dữ liệu mẫu
-        System.out.println(buyPrice("1", "1", "2022-11-24"));
-        System.out.println(sellPrice("1", "2", "2022-11-25"));
+//        System.out.println(buyPrice("1", "1", "2022-11-24"));
+//        System.out.println(sellPrice("1", "2", "2022-11-25"));
+        System.out.println(listGold("Quảng Nam", "SJC"));
     }
 
     public static ArrayList<Gold> listGold(String khuvuc, String hethong) {
-        return null;
+        ArrayList<Gold> re = new ArrayList<Gold>();
+        int count = 0;
+        Gold gold = new Gold(0, 0, 0, 0, 0, 0, null, null, null, null);
+        try {
+            PreparedStatement ps = conn.prepareStatement("select distinct khuvuc,hethong,giamua,giaban,ngaycapnhat,expiredate,full_date,(select full_date from staging.date_dim join data_warehouse.data_warehouse on date_sk=expiredate order by full_date desc limit 1) as ngayhethan\n" +
+                    "from data_warehouse.data_warehouse join staging.date_dim on ngaycapnhat=date_sk join staging.dim_khuvuc on khuvuc=id_khuvuc join staging.dim_hethong on hethong=id_heThong where tenkhuvuc=? && tenHeThong=?;");
+            ps.setString(1, "\"" + khuvuc + "\"");
+            ps.setString(2, "\"" + hethong + "\"");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int id_kv = rs.getInt("khuvuc");
+                int id_ht = rs.getInt("hethong");
+                int giamua = rs.getInt("giamua");
+                int giaban = rs.getInt("giaban");
+                int id_ngaycapnhat = rs.getInt("ngaycapnhat");
+                int id_ngayhethan = rs.getInt("expiredate");
+                //
+                String date_s = rs.getString("full_date");
+                SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = null;
+                try {
+                    date = dt.parse(date_s);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+                SimpleDateFormat dt1 = new SimpleDateFormat("dd/MM/yyyy");
+                String ngaycapnhat = dt1.format(date);
+                //
+                String date_s2 = rs.getString("ngayhethan");
+                SimpleDateFormat dt2 = new SimpleDateFormat("yyyy-MM-dd");
+                Date date2 = null;
+                try {
+                    date2 = dt2.parse(date_s2);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+                SimpleDateFormat dt3 = new SimpleDateFormat("dd/MM/yyyy");
+                String ngayhethan = dt3.format(date2);
+                gold = new Gold(id_kv, id_ht, giamua, giaban, id_ngaycapnhat, id_ngayhethan, khuvuc, hethong, ngaycapnhat, ngayhethan);
+//                System.out.println(id_kv+" "+id_ht+" "+giamua+" "+giaban+" "+id_ngaycapnhat+" "+id_ngayhethan+" "+khuvuc+" "+hethong+" "+ngaycapnhat+" "+ngayhethan);
+                re.add(gold);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        return re;
     }
+
     public static ArrayList<Gold> listGoldDefault(String khuvuc, String hethong) {
-        Gold g1 = new Gold(1,1,60,
-                70,6000,60001,
-                "a","a","26-11-2022","27-11-2022");
-        Gold g2 = new Gold(1,1,65,
-                67,6001,60002,
-                "a","a","27-11-2022","28-11-2022");
-        Gold g3 = new Gold(1,1,66,
-                68,6002,60003,
-                "a","a","28-11-2022","29-11-2022");
-        Gold g4 = new Gold(1,1,50,
-                64,6003,60004,
-                "a","a","29-11-2022","30-11-2022");
-        Gold g5 = new Gold(1,1,10,
-                100,6003,60004,
-                "a","a","30-11-2022","1-12-2022");
-        Gold g6 = new Gold(1,1,60,
-                58,6003,60004,
-                "a","a","1-12-2022","2-12-2022");
-        Gold g7 = new Gold(1,1,59,
-                60,6003,60004,
-                "a","a","2-12-2022","3-12-2022");
-        Gold g8 = new Gold(1,1,70,
-                62,6003,60004,
-                "a","a","3-12-2022","4-12-2022");
-        Gold g9 = new Gold(1,1,55,
-                99,6003,60004,
-                "a","a","4-12-2022","5-12-2022");
-        Gold g10 = new Gold(1,1,50,
-                64,6003,60004,
-                "a","a","5-12-2022","6-12-2022");
+        Gold g1 = new Gold(1, 1, 60,
+                70, 6000, 60001,
+                "a", "a", "26-11-2022", "27-11-2022");
+        Gold g2 = new Gold(1, 1, 65,
+                67, 6001, 60002,
+                "a", "a", "27-11-2022", "28-11-2022");
+        Gold g3 = new Gold(1, 1, 66,
+                68, 6002, 60003,
+                "a", "a", "28-11-2022", "29-11-2022");
+        Gold g4 = new Gold(1, 1, 50,
+                64, 6003, 60004,
+                "a", "a", "29-11-2022", "30-11-2022");
+        Gold g5 = new Gold(1, 1, 10,
+                100, 6003, 60004,
+                "a", "a", "30-11-2022", "1-12-2022");
+        Gold g6 = new Gold(1, 1, 60,
+                58, 6003, 60004,
+                "a", "a", "1-12-2022", "2-12-2022");
+        Gold g7 = new Gold(1, 1, 59,
+                60, 6003, 60004,
+                "a", "a", "2-12-2022", "3-12-2022");
+        Gold g8 = new Gold(1, 1, 70,
+                62, 6003, 60004,
+                "a", "a", "3-12-2022", "4-12-2022");
+        Gold g9 = new Gold(1, 1, 55,
+                99, 6003, 60004,
+                "a", "a", "4-12-2022", "5-12-2022");
+        Gold g10 = new Gold(1, 1, 50,
+                64, 6003, 60004,
+                "a", "a", "5-12-2022", "6-12-2022");
         ArrayList<Gold> list = new ArrayList<Gold>();
         list.add(g2);
         list.add(g4);

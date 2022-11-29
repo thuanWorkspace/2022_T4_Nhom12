@@ -1,5 +1,7 @@
 package com.example.goldprice.controller;
 
+import com.example.goldprice.dao.DatawarehouseDao;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
@@ -10,8 +12,8 @@ import java.util.List;
 public class TrangChu extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<String> listKhuvuc  = Test.getAreas_byString();
-        List<String> listHethong  = Test.getSystems_byString();
+        List<String> listKhuvuc  = DatawarehouseDao.getAreas_byString();
+        List<String> listHethong  = DatawarehouseDao.getSystems_byString();
         request.setAttribute("listkhuvuc",listKhuvuc);
         request.setAttribute("listhethong",listHethong);
         request.getRequestDispatcher("index.jsp").forward(request,response);

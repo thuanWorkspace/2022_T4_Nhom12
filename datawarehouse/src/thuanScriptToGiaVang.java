@@ -97,7 +97,6 @@ public class thuanScriptToGiaVang {
 
 			while (rs.next()) {
 				Map<String, String> mp = new HashMap<String, String>();
-
 				mp.put("id_config", Integer.toString(rs.getInt("id_config")));
 				mp.put("source_http_url", rs.getString("source_http_url"));
 				mp.put("author", rs.getString("author"));
