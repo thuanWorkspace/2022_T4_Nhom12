@@ -304,23 +304,49 @@ public class DatawarehouseDao {
     }
 
     public static ArrayList<Gold> listGoldDefault(String khuvuc, String hethong) {
-        Gold g1 = new Gold(1, 1, 60,
-                70, 6000, 60001,
-                "a", "a", "26-11-2022", "27-11-2022");
-        Gold g2 = new Gold(1, 1, 65,
-                67, 6001, 60002,
-                "a", "a", "27-11-2022", "28-11-2022");
-        Gold g3 = new Gold(1, 1, 66,
-                68, 6002, 60003,
-                "a", "a", "28-11-2022", "29-11-2022");
-        Gold g4 = new Gold(1, 1, 50,
-                64, 6003, 60004,
-                "a", "a", "29-11-2022", "30-11-2022");
+        Gold g1 = new Gold(1,1,60,
+                70,6000,60001,
+                "a","a","26-11-2022","27-11-2022");
+        Gold g2 = new Gold(1,1,65,
+                67,6001,60002,
+                "a","a","27-11-2022","28-11-2022");
+        Gold g3 = new Gold(1,1,66,
+                68,6002,60003,
+                "a","a","28-11-2022","29-11-2022");
+        Gold g4 = new Gold(1,1,50,
+                64,6003,60004,
+                "a","a","29-11-2022","30-11-2022");
+        Gold g5 = new Gold(1,1,10,
+                100,6003,60004,
+                "a","a","30-11-2022","1-12-2022");
+        Gold g6 = new Gold(1,1,60,
+                58,6003,60004,
+                "a","a","1-12-2022","2-12-2022");
+        Gold g7 = new Gold(1,1,59,
+                60,6003,60004,
+                "a","a","2-12-2022","3-12-2022");
+        Gold g8 = new Gold(1,1,70,
+                62,6003,60004,
+                "a","a","3-12-2022","4-12-2022");
+        Gold g9 = new Gold(1,1,55,
+                99,6003,60004,
+                "a","a","4-12-2022","5-12-2022");
+        Gold g10 = new Gold(1,1,50,
+                64,6003,60004,
+                "a","a","5-12-2022","6-12-2022");
         ArrayList<Gold> list = new ArrayList<Gold>();
         list.add(g2);
         list.add(g4);
         list.add(g1);
         list.add(g3);
+        list.add(g3);
+        list.add(g3);
+        list.add(g6);
+        list.add(g5);
+        list.add(g9);
+        list.add(g8);
+        list.add(g7);
+        list.add(g10);
         return list;
     }
 }
