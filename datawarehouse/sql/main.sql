@@ -173,17 +173,6 @@ CREATE TABLE data_warehouse (
     isdelete VARCHAR(5),
     expiredate INT
 );
-CREATE TABLE data_warehouse_test (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    khuvuc_hethong VARCHAR(500) NOT NULL,
-    khuvuc VARCHAR(500),
-    hethong VARCHAR(500),
-    giamua DOUBLE,
-    giaban DOUBLE,
-    ngaycapnhat INT,
-    isdelete VARCHAR(5),
-    expiredate INT
-);
 
 -- Create data for `data_warehouse` and `file_log`
 insert into controller.file_log (id_config,log_status,author) values (1,"ER","thuan");

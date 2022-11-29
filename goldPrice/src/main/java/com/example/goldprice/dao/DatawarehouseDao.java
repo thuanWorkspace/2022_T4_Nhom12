@@ -277,8 +277,8 @@ public class DatawarehouseDao {
 
     public static void main(String[] args) {
         DatawarehouseDao datawarehouseDao = new DatawarehouseDao();
-//        System.out.println(getAreas_Systems_byCode());
-//        System.out.println(getAreas_Systems_byString());
+        System.out.println(getAreas_Systems_byCode());
+        System.out.println(getAreas_Systems_byString());
         System.out.println(getAreas_byCode());
         System.out.println(getAreas_byString());
         System.out.println(getSystems_byCode());
